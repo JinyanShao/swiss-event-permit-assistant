@@ -1,0 +1,41 @@
+## .NET
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+## Build artifacts
+artifacts/
+coverage/
+*.trx
+*.coverage
+*.coveragexml
+
+## ASP.NET / local settings
+appsettings.Local.json
+*.Development.local.json
+
+## OS / editors
+.DS_Store
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+## Logs
+*.log
+logs/
+
+## Node / browser test artifacts, if added later
+node_modules/
+playwright-report/
+test-results/
+
+## Secrets
+.env
+.env.*
+!.env.example

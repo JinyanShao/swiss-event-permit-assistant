@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SwissEventPermitAssistant.Domain/SwissEventPermitAssistant.Domain.csproj" />
+    <Project Path="src/SwissEventPermitAssistant.Web/SwissEventPermitAssistant.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SwissEventPermitAssistant.Tests/SwissEventPermitAssistant.Tests.csproj" />
+  </Folder>
+</Solution>
