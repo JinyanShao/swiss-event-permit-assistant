@@ -6,7 +6,7 @@ namespace SwissEventPermitAssistant.Tests.Rules;
 
 public sealed class EventRulesEvaluatorTests
 {
-    private readonly EventRulesEvaluator _evaluator = new();
+    private readonly EventRulesEvaluator _evaluator = new(new FixedTimeProvider(new DateTimeOffset(2026, 8, 14, 12, 0, 0, TimeSpan.Zero)));
 
     [Fact]
     public void Small_public_event_without_food_or_drinks_requires_police_only_with_20_day_deadline()
@@ -196,6 +196,16 @@ public sealed class EventRulesEvaluatorTests
     }
 
     [Fact]
+    public void Deadline_status_uses_injected_clock()
+    {
+        var evaluator = new EventRulesEvaluator(new FixedTimeProvider(new DateTimeOffset(2026, 9, 10, 12, 0, 0, TimeSpan.Zero)));
+
+        var result = evaluator.Evaluate(DefaultProfile(expectedAttendance: 150, eventDate: new DateOnly(2026, 10, 10)));
+
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-20" && deadline.Status == DeadlineStatus.Approaching);
+    }
+
+    [Fact]
     public void Temporary_installations_create_site_plan_and_installation_description()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
@@ -294,4 +304,9 @@ public sealed class EventRulesEvaluatorTests
 
     private static void AssertConfirmation(AssessmentResult result, string id) =>
         Assert.Contains(result.Confirmations, item => item.Id == id);
+
+    private sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => now;
+    }
 }

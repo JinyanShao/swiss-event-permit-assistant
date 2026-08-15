@@ -6,7 +6,12 @@ namespace SwissEventPermitAssistant.Domain.Rules;
 
 public sealed class EventRulesEvaluator
 {
-    private static readonly DateOnly Today = new(2026, 8, 14);
+    private readonly TimeProvider _timeProvider;
+
+    public EventRulesEvaluator(TimeProvider? timeProvider = null)
+    {
+        _timeProvider = timeProvider ?? TimeProvider.System;
+    }
 
     public AssessmentResult Evaluate(EventProfile profile)
     {
@@ -34,7 +39,7 @@ public sealed class EventRulesEvaluator
         return Build(actions, documents, information, confirmations, deadlines, sourceIds);
     }
 
-    private static void AddPoliceLocaleRule(EventProfile profile, List<ActionRequirement> actions, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
+    private void AddPoliceLocaleRule(EventProfile profile, List<ActionRequirement> actions, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
         if (profile.ExpectedAttendance is null)
         {
@@ -53,7 +58,7 @@ public sealed class EventRulesEvaluator
         actions.AddUnique(new ActionRequirement("ACT-POLICE-LOCALE", "Autorisation Police locale", RequirementStatus.Required, "Ville de Fribourg - Police locale", "La manifestation se trouve dans le perimetre Ville de Fribourg V0.1.", sourceId, deadline));
     }
 
-    private static void AddPatenteKRules(EventProfile profile, List<ActionRequirement> actions, List<DocumentRequirement> documents, List<InformationItem> information, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
+    private void AddPatenteKRules(EventProfile profile, List<ActionRequirement> actions, List<DocumentRequirement> documents, List<InformationItem> information, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
         var patenteRequired = profile.BeverageMode == BeverageMode.BeveragesSold
             || profile.FoodMode is FoodMode.CookedFoodSold or FoodMode.OtherFoodSoldOrUnsure
@@ -162,7 +167,7 @@ public sealed class EventRulesEvaluator
         }
     }
 
-    private static void AddMobilityRules(EventProfile profile, List<ActionRequirement> actions, List<DocumentRequirement> documents, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
+    private void AddMobilityRules(EventProfile profile, List<ActionRequirement> actions, List<DocumentRequirement> documents, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
         if (profile.AffectsTrafficOrParking == YesNoUnknown.Yes)
         {
@@ -205,7 +210,7 @@ public sealed class EventRulesEvaluator
         }
     }
 
-    private static void AddOptionalVilleRules(EventProfile profile, List<ActionRequirement> actions, List<Deadline> deadlines, HashSet<string> sourceIds)
+    private void AddOptionalVilleRules(EventProfile profile, List<ActionRequirement> actions, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
         if (profile.NeedsMunicipalMaterialOrDecorations)
         {
@@ -233,13 +238,13 @@ public sealed class EventRulesEvaluator
             deadlines.OrderBy(deadline => deadline.Date ?? DateOnly.MaxValue).ThenBy(deadline => deadline.Id).ToArray(),
             sourceIds.Select(id => OfficialSources.All[id]).OrderBy(source => source.Id).ToArray());
 
-    private static Deadline CreateDaysBefore(string id, string label, DateOnly eventDate, int days, string sourceId)
+    private Deadline CreateDaysBefore(string id, string label, DateOnly eventDate, int days, string sourceId)
     {
         var date = eventDate.AddDays(-days);
         return new Deadline(id, label, date, $"Au moins {days} jours avant la manifestation.", DeadlineStatusFor(date), sourceId);
     }
 
-    private static Deadline CreateMonthsBefore(string id, string label, DateOnly eventDate, int months, string sourceId)
+    private Deadline CreateMonthsBefore(string id, string label, DateOnly eventDate, int months, string sourceId)
     {
         var date = eventDate.AddMonths(-months);
         return new Deadline(id, label, date, $"Au moins {months} mois avant la manifestation.", DeadlineStatusFor(date), sourceId);
@@ -248,14 +253,15 @@ public sealed class EventRulesEvaluator
     private static Deadline CreateUnconfirmed(string id, string label, string sourceId) =>
         new(id, label, null, "Delai minimum non confirme dans la source publique consultee.", DeadlineStatus.Unconfirmed, sourceId);
 
-    private static DeadlineStatus DeadlineStatusFor(DateOnly date)
+    private DeadlineStatus DeadlineStatusFor(DateOnly date)
     {
-        if (date < Today)
+        var today = DateOnly.FromDateTime(_timeProvider.GetLocalNow().DateTime);
+        if (date < today)
         {
             return DeadlineStatus.Passed;
         }
 
-        return date <= Today.AddDays(14) ? DeadlineStatus.Approaching : DeadlineStatus.Confirmed;
+        return date <= today.AddDays(14) ? DeadlineStatus.Approaching : DeadlineStatus.Confirmed;
     }
 
     private static string SourceForAttendance(int? attendance) =>

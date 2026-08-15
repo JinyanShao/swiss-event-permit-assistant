@@ -46,10 +46,10 @@ public sealed class AssessmentInput
 
     public YesNoUnknown PrivateVenueOwnerAuthorizationAvailable { get; set; } = YesNoUnknown.Unknown;
 
-    public EventProfile ToEventProfile() =>
+    public EventProfile ToEventProfile(DateOnly defaultEventDate) =>
         new(
             Commune,
-            EventDate ?? DateOnly.FromDateTime(DateTime.Today),
+            EventDate ?? defaultEventDate,
             ExpectedAttendance,
             VenueKind,
             IsPublicEvent,

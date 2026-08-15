@@ -8,7 +8,7 @@ using SwissEventPermitAssistant.Web.Models;
 
 namespace SwissEventPermitAssistant.Web.Pages;
 
-public sealed class ResultsModel(EventRulesEvaluator evaluator) : PageModel
+public sealed class ResultsModel(EventRulesEvaluator evaluator, TimeProvider timeProvider) : PageModel
 {
     [BindProperty]
     public string? AssessmentJson { get; set; }
@@ -51,7 +51,8 @@ public sealed class ResultsModel(EventRulesEvaluator evaluator) : PageModel
             return Page();
         }
 
-        Result = evaluator.Evaluate(Input.ToEventProfile());
+        var today = DateOnly.FromDateTime(timeProvider.GetLocalNow().DateTime);
+        Result = evaluator.Evaluate(Input.ToEventProfile(today));
         return Page();
     }
 }

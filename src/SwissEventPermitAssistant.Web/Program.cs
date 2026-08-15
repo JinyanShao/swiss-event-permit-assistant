@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<EventRulesEvaluator>();
 builder.Services.AddHealthChecks();
 
