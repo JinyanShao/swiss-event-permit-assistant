@@ -1,7 +1,10 @@
+using SwissEventPermitAssistant.Domain.Rules;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<EventRulesEvaluator>();
 
 var app = builder.Build();
 

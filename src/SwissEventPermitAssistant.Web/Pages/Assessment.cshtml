@@ -1,0 +1,176 @@
+@page
+@model SwissEventPermitAssistant.Web.Pages.AssessmentModel
+@{
+    ViewData["Title"] = "Évaluation";
+}
+
+<form id="assessmentForm" class="assessment" method="post" asp-page="/Results" novalidate>
+    <input type="hidden" id="assessmentJson" name="AssessmentJson" />
+
+    <div class="assessment-header">
+        <div>
+            <p class="eyebrow">Évaluation</p>
+            <h1>Décrivez votre manifestation</h1>
+        </div>
+        <div class="progress-readout" aria-live="polite">
+            <span id="stepCounter">01 / 06</span>
+            <span id="stepTitle">Manifestation</span>
+        </div>
+    </div>
+    <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+
+    <section class="question-step is-active" data-step="0" data-title="Manifestation">
+        <fieldset>
+            <legend>Manifestation</legend>
+            <label class="field">
+                <span>Nom de la manifestation</span>
+                <span class="field-help">Facultatif. Il sert uniquement à reconnaître votre résultat.</span>
+                <input name="eventName" maxlength="120" autocomplete="off" />
+            </label>
+            <label class="field">
+                <span>Date de la manifestation</span>
+                <span class="field-help">Cette date sert à calculer les délais officiels.</span>
+                <input name="eventDate" type="date" required />
+                <span class="field-error">Indiquez une date de manifestation.</span>
+            </label>
+            <label class="field">
+                <span>Nombre de personnes attendues</span>
+                <span class="field-help">Une estimation suffit pour orienter les démarches.</span>
+                <input name="expectedAttendance" type="number" min="1" inputmode="numeric" />
+            </label>
+        </fieldset>
+    </section>
+
+    <section class="question-step" data-step="1" data-title="Lieu">
+        <fieldset>
+            <legend>Lieu</legend>
+            <div class="field-group">
+                <p class="question-label">La manifestation aura-t-elle lieu dans l’espace public ?</p>
+                <p class="field-help">Par exemple une rue, une place, un parc ou un espace accessible au public.</p>
+                <label class="choice"><input type="radio" name="venueKind" value="PublicSpace" required /> Oui, dans l’espace public</label>
+                <label class="choice"><input type="radio" name="venueKind" value="PrivateVenue" /> Non, sur un terrain ou dans un lieu privé</label>
+                <label class="choice"><input type="radio" name="venueKind" value="NotSure" /> Je ne sais pas</label>
+                <span class="field-error">Sélectionnez une réponse.</span>
+            </div>
+            <div class="field-group">
+                <p class="question-label">La manifestation est-elle ouverte au public ?</p>
+                <label class="choice"><input type="radio" name="isPublicEvent" value="Yes" checked /> Oui</label>
+                <label class="choice"><input type="radio" name="isPublicEvent" value="No" /> Non</label>
+                <label class="choice"><input type="radio" name="isPublicEvent" value="Unknown" /> Je ne sais pas</label>
+            </div>
+            <div class="conditional" data-show-when="venueKind:PrivateVenue">
+                <p class="question-label">Avez-vous une autorisation signée du propriétaire ?</p>
+                <p class="field-help">Elle peut être nécessaire si une démarche officielle est requise pour un terrain privé.</p>
+                <label class="choice"><input type="radio" name="privateVenueOwnerAuthorizationAvailable" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="privateVenueOwnerAuthorizationAvailable" value="No" /> Non</label>
+                <label class="choice"><input type="radio" name="privateVenueOwnerAuthorizationAvailable" value="Unknown" checked /> Je ne sais pas</label>
+            </div>
+        </fieldset>
+    </section>
+
+    <section class="question-step" data-step="2" data-title="Boissons et nourriture">
+        <fieldset>
+            <legend>Boissons et nourriture</legend>
+            <div class="field-group">
+                <p class="question-label">Quelle situation correspond aux boissons ?</p>
+                <label class="choice"><input type="radio" name="beverageMode" value="NoBeverages" checked /> Aucune boisson</label>
+                <label class="choice"><input type="radio" name="beverageMode" value="BeveragesSold" /> Des boissons seront vendues</label>
+                <label class="choice"><input type="radio" name="beverageMode" value="BeveragesFree" /> Des boissons seront offertes gratuitement</label>
+                <label class="choice"><input type="radio" name="beverageMode" value="NotSure" /> Je ne sais pas</label>
+            </div>
+            <div class="field-group">
+                <p class="question-label">Quelle situation correspond à la nourriture ?</p>
+                <label class="choice"><input type="radio" name="foodMode" value="NoFood" checked /> Aucune nourriture</label>
+                <label class="choice"><input type="radio" name="foodMode" value="CookedFoodSold" /> Des mets cuisinés seront vendus</label>
+                <label class="choice"><input type="radio" name="foodMode" value="OtherFoodSoldOrUnsure" /> Autre nourriture vendue</label>
+                <label class="choice"><input type="radio" name="foodMode" value="FoodFree" /> De la nourriture sera offerte gratuitement</label>
+                <label class="choice"><input type="radio" name="foodMode" value="NotSure" /> Je ne sais pas</label>
+            </div>
+            <div class="field-group">
+                <p class="question-label">Y aura-t-il des boissons alcoolisées ?</p>
+                <label class="choice"><input type="radio" name="alcoholMode" value="NoAlcohol" checked /> Non</label>
+                <label class="choice"><input type="radio" name="alcoholMode" value="AlcoholSold" /> Oui, vendues</label>
+                <label class="choice"><input type="radio" name="alcoholMode" value="AlcoholFree" /> Oui, offertes gratuitement</label>
+                <label class="choice"><input type="radio" name="alcoholMode" value="NotSure" /> Je ne sais pas</label>
+            </div>
+            <p class="not-sure-note">Les réponses « Je ne sais pas » seront traitées comme des points à confirmer, pas comme des erreurs.</p>
+        </fieldset>
+    </section>
+
+    <section class="question-step" data-step="3" data-title="Musique et installations">
+        <fieldset>
+            <legend>Musique et installations</legend>
+            <div class="field-group">
+                <p class="question-label">Y aura-t-il de la musique amplifiée ou une sonorisation ?</p>
+                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="No" checked /> Non</label>
+                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Unknown" /> Je ne sais pas</label>
+            </div>
+            <div class="conditional" data-show-when="hasAmplifiedMusicOrSound:Yes,Unknown">
+                <label class="field">
+                    <span>Heure de fin prévue</span>
+                    <span class="field-help">Facultatif, mais utile si la manifestation se termine tard.</span>
+                    <input name="eventEndTime" type="time" />
+                </label>
+            </div>
+            <div class="field-group">
+                <p class="question-label">Y aura-t-il des installations temporaires ?</p>
+                <p class="field-help">Par exemple tente, scène, bar, cuisine, WC, gradins.</p>
+                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="No" checked /> Non</label>
+                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="Unknown" /> Je ne sais pas</label>
+            </div>
+            <div class="field-group">
+                <p class="question-label">Utiliserez-vous un gril ou chauffage à gaz ?</p>
+                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="No" checked /> Non</label>
+                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="Unknown" /> Je ne sais pas</label>
+            </div>
+        </fieldset>
+    </section>
+
+    <section class="question-step" data-step="4" data-title="Circulation">
+        <fieldset>
+            <legend>Circulation</legend>
+            <div class="field-group">
+                <p class="question-label">La manifestation aura-t-elle un impact sur la circulation ou le stationnement ?</p>
+                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="No" checked /> Non</label>
+                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="Unknown" /> Je ne sais pas</label>
+            </div>
+            <div class="field-group">
+                <p class="question-label">Y aura-t-il un cortège, un parcours ou une occupation de route ?</p>
+                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="No" checked /> Non</label>
+                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="Unknown" /> Je ne sais pas</label>
+            </div>
+            <div class="field-group">
+                <p class="question-label">S’agit-il d’une compétition sportive sur la voie publique ?</p>
+                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="No" checked /> Non</label>
+                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="Unknown" /> Je ne sais pas</label>
+            </div>
+        </fieldset>
+    </section>
+
+    <section class="question-step" data-step="5" data-title="Vérification">
+        <fieldset>
+            <legend>Vérification</legend>
+            <div class="field-group">
+                <p class="question-label">Avez-vous une assurance responsabilité civile valable ?</p>
+                <p class="field-help">La Ville indique que l’organisateur doit pouvoir présenter une RC valable.</p>
+                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Yes" /> Oui</label>
+                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="No" /> Non</label>
+                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Unknown" checked /> Je ne sais pas</label>
+            </div>
+            <label class="checkline"><input type="checkbox" name="needsMunicipalMaterialOrDecorations" /> J’ai besoin de matériel ou décorations communales.</label>
+            <label class="checkline"><input type="checkbox" name="needsAdvertisingBannerOrPublicPosting" /> J’ai besoin d’affichage public ou d’une banderole.</label>
+        </fieldset>
+    </section>
+
+    <div class="navigation-actions">
+        <button class="button button-secondary" type="button" id="previousStep">Retour</button>
+        <button class="button button-primary" type="button" id="nextStep">Continuer</button>
+        <button class="button button-primary" type="submit" id="submitAssessment">Voir le résultat</button>
+    </div>
+</form>

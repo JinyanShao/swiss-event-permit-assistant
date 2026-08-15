@@ -1,0 +1,201 @@
+@page
+@using Microsoft.AspNetCore.Html
+@using System.Net
+@using SwissEventPermitAssistant.Domain.Results
+@model SwissEventPermitAssistant.Web.Pages.ResultsModel
+@{
+    ViewData["Title"] = "Résultat";
+    var result = Model.Result;
+    var input = Model.Input;
+}
+
+@if (!ViewData.ModelState.IsValid || result is null || input is null)
+{
+    <section class="notice-block">
+        <h1>Résultat indisponible</h1>
+        <p>La date de la manifestation est nécessaire pour calculer les délais.</p>
+        <a class="button button-primary" asp-page="/Assessment">Modifier mes réponses</a>
+    </section>
+}
+else
+{
+    <section class="result-layout">
+        <div class="result-main">
+            <p class="eyebrow">Résultat de préparation</p>
+            <h1>Votre manifestation</h1>
+            <p class="event-summary">
+                @(input.ExpectedAttendance?.ToString() ?? "Nombre à confirmer") personnes ·
+                @Display(input.VenueKind.ToString()) ·
+                @Display(input.BeverageMode.ToString()) ·
+                @input.EventDate?.ToString("dd.MM.yyyy")
+            </p>
+
+            <section class="deadline-block @DeadlineClass(result.NextImportantDeadline)">
+                <p class="section-kicker">Prochaine échéance</p>
+                @if (result.NextImportantDeadline is { } deadline)
+                {
+                    <h2>@FormatDate(deadline.Date)</h2>
+                    <p class="deadline-label">@deadline.Label</p>
+                    <p>@deadline.Basis</p>
+                    @if (deadline.Status == DeadlineStatus.Passed)
+                    {
+                        <p class="deadline-warning">Date minimale officielle dépassée. Contactez l’autorité compétente avant de poursuivre.</p>
+                    }
+                }
+                else
+                {
+                    <h2>Délai à confirmer</h2>
+                    <p>Aucun délai calculable n’a été identifié pour vos réponses.</p>
+                }
+            </section>
+
+            <section class="result-section">
+                <h2>Démarches requises</h2>
+                @if (result.Actions.Count == 0)
+                {
+                    <p>Aucune démarche requise n’a été identifiée automatiquement. Vérifiez les points à confirmer.</p>
+                }
+                @for (var i = 0; i < result.Actions.Count; i++)
+                {
+                    var action = result.Actions[i];
+                    <article class="ruled-item">
+                        <div class="item-number">@((i + 1).ToString("00"))</div>
+                        <div>
+                            <p class="status-text">@StatusText(action.Status)</p>
+                            <h3>@action.Title</h3>
+                            <p class="metadata">@action.Authority</p>
+                            @if (action.Deadline is { Status: DeadlineStatus.Unconfirmed })
+                            {
+                                <p><strong>Délai à confirmer.</strong> @action.Deadline.Basis</p>
+                            }
+                            else if (action.Deadline is not null)
+                            {
+                                <p><strong>Délai.</strong> @FormatDate(action.Deadline.Date) · @action.Deadline.Basis</p>
+                            }
+                            <p><strong>Pourquoi ?</strong> @action.Reason</p>
+                            @SourceDisclosure(action.SourceId)
+                        </div>
+                    </article>
+                }
+            </section>
+
+            <section class="result-section">
+                <h2>Documents à préparer</h2>
+                @foreach (var document in result.Documents)
+                {
+                    <article class="ruled-item compact">
+                        <div class="item-marker">□</div>
+                        <div>
+                            <h3>@document.Title</h3>
+                            <p>@document.Reason</p>
+                            @if (document.TriggeredByRuleIds.Count > 1)
+                            {
+                                <p class="metadata">Déclenché par plusieurs règles.</p>
+                            }
+                            @SourceDisclosure(document.SourceId)
+                        </div>
+                    </article>
+                }
+            </section>
+
+            <section class="result-section">
+                <h2>Informations utiles</h2>
+                @foreach (var info in result.Information)
+                {
+                    <article class="ruled-item compact">
+                        <div class="item-marker">i</div>
+                        <div>
+                            <h3>@info.Title</h3>
+                            <p>@info.Text</p>
+                            @SourceDisclosure(info.SourceId)
+                        </div>
+                    </article>
+                }
+            </section>
+
+            <section class="result-section confirmation-section">
+                <h2>À confirmer</h2>
+                @if (result.Confirmations.Count == 0)
+                {
+                    <p>Aucun point à confirmer n’a été identifié automatiquement.</p>
+                }
+                @foreach (var confirmation in result.Confirmations)
+                {
+                    <article class="confirmation-item">
+                        <p class="status-text">À confirmer</p>
+                        <h3>@confirmation.Title</h3>
+                        <p>@confirmation.Reason</p>
+                        <p><strong>À faire.</strong> @confirmation.WhatToDo</p>
+                        <p class="metadata">@confirmation.Authority</p>
+                        @SourceDisclosure(confirmation.SourceId)
+                    </article>
+                }
+            </section>
+        </div>
+
+        <aside class="result-rail">
+            <h2>Sources officielles</h2>
+            <p>Informations vérifiées le 14 août 2026 à partir de sources officielles publiques.</p>
+            @foreach (var source in result.Sources)
+            {
+                <details class="source-detail">
+                    <summary>@source.Authority</summary>
+                    <p>@source.Title</p>
+                    <p class="metadata">Vérifiée le @source.CheckedDate.ToString("dd.MM.yyyy")</p>
+                    <a href="@source.Url" target="_blank" rel="noreferrer">Lien officiel →</a>
+                </details>
+            }
+            <form method="get" asp-page="/Assessment">
+                <button class="button button-secondary wide" type="submit">Modifier mes réponses</button>
+            </form>
+        </aside>
+    </section>
+}
+
+@functions {
+    private static string FormatDate(DateOnly? date) => date?.ToString("dd.MM.yyyy") ?? "À confirmer";
+
+    private static string StatusText(RequirementStatus status) => status switch
+    {
+        RequirementStatus.Required => "Requis",
+        RequirementStatus.NeedsConfirmation => "À confirmer",
+        _ => "Information"
+    };
+
+    private static string DeadlineClass(Deadline? deadline) => deadline?.Status switch
+    {
+        DeadlineStatus.Passed => "is-passed",
+        DeadlineStatus.Unconfirmed => "is-unconfirmed",
+        DeadlineStatus.Approaching => "is-approaching",
+        _ => string.Empty
+    };
+
+    private static string Display(string value) => value switch
+    {
+        "PublicSpace" => "Espace public",
+        "PrivateVenue" => "Lieu privé",
+        "NotSure" => "Lieu à confirmer",
+        "BeveragesSold" => "Boissons vendues",
+        "BeveragesFree" => "Boissons offertes",
+        "NoBeverages" => "Sans boissons",
+        _ => value
+    };
+
+    private IHtmlContent SourceDisclosure(string sourceId)
+    {
+        var source = Model.Result?.Sources.FirstOrDefault(item => item.Id == sourceId);
+        if (source is null)
+        {
+            return HtmlString.Empty;
+        }
+
+        var html = $"""
+            <details class="inline-source">
+                <summary>Source officielle</summary>
+                <p>{WebUtility.HtmlEncode(source.Authority)} · vérifiée le {source.CheckedDate:dd.MM.yyyy}</p>
+                <a href="{WebUtility.HtmlEncode(source.Url.ToString())}" target="_blank" rel="noreferrer">Voir la source officielle →</a>
+            </details>
+            """;
+        return new HtmlString(html);
+    }
+}

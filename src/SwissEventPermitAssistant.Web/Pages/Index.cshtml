@@ -1,10 +1,39 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Préparer une manifestation";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="landing-grid">
+    <div class="landing-main">
+        <p class="eyebrow">Ville de Fribourg · Manifestations temporaires</p>
+        <h1>Préparer une manifestation à Fribourg</h1>
+        <p class="lead">
+            Décrivez votre manifestation. L’outil indique les démarches, documents,
+            délais et points à confirmer à partir de sources officielles publiques.
+        </p>
+        <div class="action-line">
+            <a class="button button-primary" asp-page="/Assessment">Commencer l’évaluation</a>
+        </div>
+    </div>
+
+    <aside class="scope-panel" aria-label="Périmètre du service">
+        <section>
+            <h2>Périmètre actuel</h2>
+            <p>Ville de Fribourg uniquement. Les autres communes doivent être confirmées séparément.</p>
+        </section>
+        <section>
+            <h2>Service indépendant</h2>
+            <p>Ce service n’est pas un site officiel de la Ville ou du Canton.</p>
+        </section>
+        <section>
+            <h2>À préparer</h2>
+            <ul class="plain-list">
+                <li>Date</li>
+                <li>Nombre de personnes</li>
+                <li>Lieu</li>
+                <li>Boissons, nourriture, musique, installations, circulation</li>
+            </ul>
+        </section>
+    </aside>
+</section>
