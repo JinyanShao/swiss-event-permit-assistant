@@ -15,7 +15,7 @@ if (form) {
   let currentStep = Number(sessionStorage.getItem("sepa.currentStep") || "0");
 
   restoreDraft();
-  showStep(currentStep);
+  showStep(currentStep, false);
   refreshConditionals();
 
   form.addEventListener("change", () => {
@@ -48,10 +48,12 @@ if (form) {
     localStorage.setItem(resultKey, json);
   });
 
-  function showStep(index) {
+  function showStep(index, moveFocus = true) {
     currentStep = Math.max(0, Math.min(index, steps.length - 1));
     steps.forEach((step, stepIndex) => {
-      step.classList.toggle("is-active", stepIndex === currentStep);
+      const active = stepIndex === currentStep;
+      step.classList.toggle("is-active", active);
+      step.setAttribute("aria-hidden", String(!active));
     });
 
     counter.textContent = `${String(currentStep + 1).padStart(2, "0")} / ${String(steps.length).padStart(2, "0")}`;
@@ -61,6 +63,9 @@ if (form) {
     next.hidden = currentStep === steps.length - 1;
     submit.hidden = currentStep !== steps.length - 1;
     sessionStorage.setItem("sepa.currentStep", String(currentStep));
+    if (moveFocus) {
+      steps[currentStep].focus({ preventScroll: false });
+    }
   }
 
   function validateStep() {
@@ -71,17 +76,24 @@ if (form) {
     activeStep.querySelectorAll(".field-error.is-visible").forEach((error) => {
       error.classList.remove("is-visible");
     });
+    activeStep.querySelectorAll("[aria-invalid='true']").forEach((field) => {
+      field.setAttribute("aria-invalid", "false");
+    });
 
     for (const field of fields) {
       if (field.type === "radio") {
         const group = activeStep.querySelectorAll(`input[name="${field.name}"]`);
         if (!Array.from(group).some((radio) => radio.checked)) {
           valid = false;
+          group.forEach((radio) => radio.setAttribute("aria-invalid", "true"));
           field.closest(".field-group")?.querySelector(".field-error")?.classList.add("is-visible");
+          field.focus();
         }
       } else if (!field.value) {
         valid = false;
+        field.setAttribute("aria-invalid", "true");
         field.closest(".field")?.querySelector(".field-error")?.classList.add("is-visible");
+        field.focus();
       }
     }
 

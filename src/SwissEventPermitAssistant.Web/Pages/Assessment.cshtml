@@ -19,19 +19,19 @@
     </div>
     <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
 
-    <section class="question-step is-active" data-step="0" data-title="Manifestation">
+    <section class="question-step is-active" data-step="0" data-title="Manifestation" tabindex="-1">
         <fieldset>
             <legend>Manifestation</legend>
             <label class="field">
                 <span>Nom de la manifestation</span>
-                <span class="field-help">Facultatif. Il sert uniquement à reconnaître votre résultat.</span>
-                <input name="eventName" maxlength="120" autocomplete="off" />
+                <span id="eventName-help" class="field-help">Facultatif. Il sert uniquement à reconnaître votre résultat.</span>
+                <input name="eventName" maxlength="120" autocomplete="off" aria-describedby="eventName-help" />
             </label>
             <label class="field">
                 <span>Date de la manifestation</span>
-                <span class="field-help">Cette date sert à calculer les délais officiels.</span>
-                <input name="eventDate" type="date" required />
-                <span class="field-error">Indiquez une date de manifestation.</span>
+                <span id="eventDate-help" class="field-help">Cette date sert à calculer les délais officiels.</span>
+                <input name="eventDate" type="date" required aria-describedby="eventDate-help eventDate-error" />
+                <span id="eventDate-error" class="field-error" role="alert">Indiquez une date de manifestation.</span>
             </label>
             <label class="field">
                 <span>Nombre de personnes attendues</span>
@@ -41,16 +41,16 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="1" data-title="Lieu">
+    <section class="question-step" data-step="1" data-title="Lieu" tabindex="-1">
         <fieldset>
             <legend>Lieu</legend>
-            <div class="field-group">
-                <p class="question-label">La manifestation aura-t-elle lieu dans l’espace public ?</p>
-                <p class="field-help">Par exemple une rue, une place, un parc ou un espace accessible au public.</p>
+            <div class="field-group" role="radiogroup" aria-labelledby="venueKind-label" aria-describedby="venueKind-help venueKind-error">
+                <p id="venueKind-label" class="question-label">La manifestation aura-t-elle lieu dans l’espace public ?</p>
+                <p id="venueKind-help" class="field-help">Par exemple une rue, une place, un parc ou un espace accessible au public.</p>
                 <label class="choice"><input type="radio" name="venueKind" value="PublicSpace" required /> Oui, dans l’espace public</label>
                 <label class="choice"><input type="radio" name="venueKind" value="PrivateVenue" /> Non, sur un terrain ou dans un lieu privé</label>
                 <label class="choice"><input type="radio" name="venueKind" value="NotSure" /> Je ne sais pas</label>
-                <span class="field-error">Sélectionnez une réponse.</span>
+                <span id="venueKind-error" class="field-error" role="alert">Sélectionnez une réponse.</span>
             </div>
             <div class="field-group">
                 <p class="question-label">La manifestation est-elle ouverte au public ?</p>
@@ -68,7 +68,7 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="2" data-title="Boissons et nourriture">
+    <section class="question-step" data-step="2" data-title="Boissons et nourriture" tabindex="-1">
         <fieldset>
             <legend>Boissons et nourriture</legend>
             <div class="field-group">
@@ -97,7 +97,7 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="3" data-title="Musique et installations">
+    <section class="question-step" data-step="3" data-title="Musique et installations" tabindex="-1">
         <fieldset>
             <legend>Musique et installations</legend>
             <div class="field-group">
@@ -129,7 +129,7 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="4" data-title="Circulation">
+    <section class="question-step" data-step="4" data-title="Circulation" tabindex="-1">
         <fieldset>
             <legend>Circulation</legend>
             <div class="field-group">
@@ -153,7 +153,7 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="5" data-title="Vérification">
+    <section class="question-step" data-step="5" data-title="Vérification" tabindex="-1">
         <fieldset>
             <legend>Vérification</legend>
             <div class="field-group">

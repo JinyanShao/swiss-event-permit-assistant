@@ -9,11 +9,12 @@
     <link rel="stylesheet" href="~/SwissEventPermitAssistant.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Aller au contenu principal</a>
     <header class="site-header">
         <a class="brand" asp-page="/Index">Swiss Event Permit Assistant</a>
         <span class="scope-label">Ville de Fribourg · V0.1</span>
     </header>
-    <main class="page-shell" role="main">
+    <main id="main-content" class="page-shell" role="main" tabindex="-1">
         @RenderBody()
     </main>
 
