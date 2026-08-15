@@ -87,6 +87,33 @@ Run the web app:
 dotnet run --project src/SwissEventPermitAssistant.Web
 ```
 
+## Production Readiness
+
+The application has no server-side dossier storage, no login, and no official submission integration in V0.1. Production deployments should set `ASPNETCORE_ENVIRONMENT=Production` and expose the application through HTTPS.
+
+Health check:
+
+```bash
+curl https://your-host.example/healthz
+```
+
+Release verification:
+
+```bash
+dotnet restore
+dotnet build SwissEventPermitAssistant.slnx --configuration Release --no-restore
+dotnet test SwissEventPermitAssistant.slnx --configuration Release --no-build
+dotnet publish src/SwissEventPermitAssistant.Web/SwissEventPermitAssistant.Web.csproj --configuration Release --output ./artifacts/publish
+```
+
+GitHub Actions runs the same restore, build, test, and publish checks on `main` and pull requests.
+
+## Disclaimer And Source Freshness
+
+Swiss Event Permit Assistant is not affiliated with the Ville de Fribourg, Canton de Fribourg, prefectures, Police locale, or OCN. It organizes public information for preparation only. Users must confirm final requirements, forms, fees, deadlines, and submission instructions with the competent authority.
+
+Rule sources were last reviewed on 2026-08-14. Source freshness policy and unresolved interpretations are recorded in `docs/sources/README.md`.
+
 ## Design Direction
 
 The locked visual direction is Swiss Civic Editorial: restrained, precise, editorial, typographic, and source-forward. The current generated Razor Pages template is only an engineering skeleton; the final UI must not keep a default Bootstrap or generic template appearance.

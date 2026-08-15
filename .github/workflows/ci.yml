@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-publish:
+    name: Build, test, publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore SwissEventPermitAssistant.slnx
+
+      - name: Build
+        run: dotnet build SwissEventPermitAssistant.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test SwissEventPermitAssistant.slnx --configuration Release --no-build --verbosity normal
+
+      - name: Publish web app
+        run: dotnet publish src/SwissEventPermitAssistant.Web/SwissEventPermitAssistant.Web.csproj --configuration Release --no-build --output artifacts/publish

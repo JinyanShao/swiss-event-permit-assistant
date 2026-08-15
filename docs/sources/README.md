@@ -1,14 +1,27 @@
 # Official Source Inventory
 
-This directory is reserved for official source records used by the rule matrix.
+V0.1 uses public official pages for the Ville de Fribourg, Canton de Fribourg, and OCN. The application is independent and does not guarantee that the sources remain current after the checked date.
 
-Each source record should keep:
+## Freshness Policy
 
-- source id
-- authority
-- title
-- official URL
-- source type
-- checked date
-- version or effective date, when available
-- notes about unresolved interpretation
+- Last product rule review: 2026-08-14.
+- Recheck official sources before any public release, policy change, or rule change.
+- Treat rules older than 90 days since the last checked date as stale until manually reviewed.
+- If a page changes or an interpretation is ambiguous, mark the affected result as `Needs Confirmation` instead of inferring a requirement.
+
+## V0.1 Sources
+
+| Source ID | Authority | Scope | URL | Checked | Confidence |
+| --- | --- | --- | --- | --- | --- |
+| `SRC-VDF-LT200` | Ville de Fribourg | Manifestations de moins de 200 personnes | https://www.ville-fribourg.ch/organiser-manifestation/moins-de-200 | 2026-08-14 | High |
+| `SRC-VDF-200-1000` | Ville de Fribourg | Manifestations de 200 a 1000 personnes | https://www.ville-fribourg.ch/organiser-manifestation/200-a-1000 | 2026-08-14 | High |
+| `SRC-VDF-GT1000` | Ville de Fribourg | Manifestations de plus de 1000 personnes | https://www.ville-fribourg.ch/organiser-manifestation/plus-de-1000 | 2026-08-14 | High |
+| `SRC-FR-PATENTE-K` | Canton de Fribourg | Manifestations temporaires, Patente K | https://www.fr.ch/vie-quotidienne/demarches-et-documents/manifestations-temporaires-patente-k | 2026-08-14 | Medium |
+| `SRC-FR-FORM-B` | Canton de Fribourg | Formulaires des prefectures | https://www.fr.ch/vie-quotidienne/demarches-et-documents/formulaires-des-prefectures | 2026-08-14 | Medium |
+| `SRC-OCN-SPORT` | OCN Fribourg | Competitions sportives sur route | https://www.ocn.ch/fr/conduire/autorisations/competitions-sportives | 2026-08-14 | Medium |
+
+## Unresolved Items Kept As Confirmation
+
+- Patente K treatment for some free food or free alcohol cases where public pages do not make the operational path fully clear.
+- Formulaire A/B role in the current online Patente K workflow when the public service page does not state whether upload is required.
+- Police locale authorization deadline when the Ville page does not provide a precise lead time.
