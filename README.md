@@ -116,4 +116,4 @@ Rule sources were last reviewed on 2026-08-14. Source freshness policy and unres
 
 ## Design Direction
 
-The locked visual direction is Swiss Civic Editorial: restrained, precise, editorial, typographic, and source-forward. The current generated Razor Pages template is only an engineering skeleton; the final UI must not keep a default Bootstrap or generic template appearance.
+The interface follows a Swiss Civic Editorial visual system focused on restrained typography, grid-based layouts, source transparency, and clear administrative information.
