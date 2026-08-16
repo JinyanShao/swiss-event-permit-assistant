@@ -1,5 +1,7 @@
 # Swiss Event Permit Assistant
 
+**[Live demo](https://sepa-fribourg-jinyan.azurewebsites.net)** · [License: MIT](LICENSE)
+
 V0.1 pilot for preparing temporary event permit dossiers for the Ville de Fribourg.
 
 This project is an independent tool. It is not an official service of the Ville de Fribourg or the Canton de Fribourg. It helps users organize publicly available official requirements, deadlines, source links, and points that must be confirmed with the competent authority.
@@ -117,3 +119,7 @@ Rule sources were last reviewed on 2026-08-14. Source freshness policy and unres
 ## Design Direction
 
 The interface follows a Swiss Civic Editorial visual system focused on restrained typography, grid-based layouts, source transparency, and clear administrative information.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
