@@ -38,15 +38,6 @@ V0.1 does not:
 - upload attachments
 - create user accounts
 
-## Confirmed Reuse Plan
-
-- UI design and adjustment: `frontend-design`
-- UI review after implementation: `web-design-guidelines`
-- Real browser flow testing: `playwright-skill`
-- Core business rule testing: xUnit
-- Pre-deployment security review: `security-threat-model` and `insecure-defaults`
-- PDF automation: deferred to V0.2
-
 ## Technical Stack
 
 - .NET 10
