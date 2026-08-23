@@ -10,13 +10,13 @@
     <p class="lede">@Model.Message</p>
     <div class="hero-actions">
         <a class="button button-primary" asp-page="/Assessment">Reprendre le questionnaire</a>
-        <a class="button button-secondary" asp-page="/Index">Retour a l'accueil</a>
+        <a class="button button-secondary" asp-page="/Index">Retour à l’accueil</a>
     </div>
 </section>
 
 @if (Model.ShowRequestId)
 {
     <p class="source-note">
-        Reference technique: <code>@Model.RequestId</code>
+        Référence technique: <code>@Model.RequestId</code>
     </p>
 }

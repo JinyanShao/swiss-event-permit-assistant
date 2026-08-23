@@ -24,9 +24,9 @@ public class ErrorModel : PageModel
 
     public string Message => ResponseStatusCode switch
     {
-        404 => "Cette page n'existe pas ou son adresse a change.",
-        405 => "Cette action ne peut pas etre traitee depuis cette page.",
-        _ => "La demande n'a pas pu etre traitee. Reessayez depuis le questionnaire ou consultez les sources officielles."
+        404 => "Cette page n’existe pas ou son adresse a changé.",
+        405 => "Cette action ne peut pas être traitée depuis cette page.",
+        _ => "La demande n’a pas pu être traitée. Réessayez depuis le questionnaire ou consultez les sources officielles."
     };
 
     public void OnGet()

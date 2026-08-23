@@ -34,6 +34,11 @@
                 <span id="eventDate-error" class="field-error" role="alert">Indiquez une date de manifestation.</span>
             </label>
             <label class="field">
+                <span>Heure de fin prévue</span>
+                <span class="field-help">Facultatif. Utile si la manifestation se termine tard.</span>
+                <input name="eventEndTime" type="time" />
+            </label>
+            <label class="field">
                 <span>Nombre de personnes attendues</span>
                 <span class="field-help">Une estimation suffit pour orienter les démarches.</span>
                 <input name="expectedAttendance" type="number" min="1" inputmode="numeric" />
@@ -72,14 +77,14 @@
         <fieldset>
             <legend>Boissons et nourriture</legend>
             <div class="field-group">
-                <p class="question-label">Quelle situation correspond aux boissons ?</p>
+                <p class="question-label">Qu’en est-il des boissons ?</p>
                 <label class="choice"><input type="radio" name="beverageMode" value="NoBeverages" checked /> Aucune boisson</label>
                 <label class="choice"><input type="radio" name="beverageMode" value="BeveragesSold" /> Des boissons seront vendues</label>
                 <label class="choice"><input type="radio" name="beverageMode" value="BeveragesFree" /> Des boissons seront offertes gratuitement</label>
                 <label class="choice"><input type="radio" name="beverageMode" value="NotSure" /> Je ne sais pas</label>
             </div>
             <div class="field-group">
-                <p class="question-label">Quelle situation correspond à la nourriture ?</p>
+                <p class="question-label">Qu’en est-il de la nourriture ?</p>
                 <label class="choice"><input type="radio" name="foodMode" value="NoFood" checked /> Aucune nourriture</label>
                 <label class="choice"><input type="radio" name="foodMode" value="CookedFoodSold" /> Des mets cuisinés seront vendus</label>
                 <label class="choice"><input type="radio" name="foodMode" value="OtherFoodSoldOrUnsure" /> Autre nourriture vendue</label>
@@ -105,13 +110,6 @@
                 <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Yes" /> Oui</label>
                 <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="No" checked /> Non</label>
                 <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Unknown" /> Je ne sais pas</label>
-            </div>
-            <div class="conditional" data-show-when="hasAmplifiedMusicOrSound:Yes,Unknown">
-                <label class="field">
-                    <span>Heure de fin prévue</span>
-                    <span class="field-help">Facultatif, mais utile si la manifestation se termine tard.</span>
-                    <input name="eventEndTime" type="time" />
-                </label>
             </div>
             <div class="field-group">
                 <p class="question-label">Y aura-t-il des installations temporaires ?</p>
@@ -163,7 +161,7 @@
                 <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Unknown" checked /> Je ne sais pas</label>
             </div>
-            <label class="checkline"><input type="checkbox" name="needsMunicipalMaterialOrDecorations" /> J’ai besoin de matériel ou décorations communales.</label>
+            <label class="checkline"><input type="checkbox" name="needsMunicipalMaterialOrDecorations" /> J’ai besoin de matériel ou de décorations communales.</label>
             <label class="checkline"><input type="checkbox" name="needsAdvertisingBannerOrPublicPosting" /> J’ai besoin d’affichage public ou d’une banderole.</label>
         </fieldset>
     </section>

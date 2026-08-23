@@ -24,7 +24,7 @@ public static class OfficialSources
             ["SRC-VDF-200-1000"] = new(
                 "SRC-VDF-200-1000",
                 "Ville de Fribourg",
-                "Organiser une manifestation - de 200 a 1000 personnes",
+                "Organiser une manifestation - de 200 à 1000 personnes",
                 new Uri("https://www.ville-fribourg.ch/organiser-manifestation/200-a-1000"),
                 new DateOnly(2026, 8, 14),
                 "High"),
@@ -45,14 +45,14 @@ public static class OfficialSources
             ["SRC-FR-FORM-B"] = new(
                 "SRC-FR-FORM-B",
                 "Canton de Fribourg",
-                "Formulaire complementaire B - manifestation d'importance",
+                "Formulaire complémentaire B - manifestation d’importance",
                 new Uri("https://www.fr.ch/vie-quotidienne/demarches-et-documents/formulaires-des-prefectures"),
                 new DateOnly(2026, 8, 14),
                 "Medium"),
             ["SRC-OCN-SPORT"] = new(
                 "SRC-OCN-SPORT",
                 "Office de la circulation et de la navigation",
-                "Competitions sportives sur voie publique",
+                "Compétitions sportives sur voie publique",
                 new Uri("https://www.ocn.ch/fr/conduire/autorisations/competitions-sportives"),
                 new DateOnly(2026, 8, 14),
                 "High")
