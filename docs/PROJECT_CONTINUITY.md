@@ -207,7 +207,7 @@ Official source inventory and freshness policy live in:
 
 Last product rule review recorded in the source inventory:
 
-- 2026-08-14
+- 2026-08-23
 
 Freshness policy:
 
@@ -221,7 +221,6 @@ V0.1 intentionally keeps these as confirmation items rather than automatic requi
 
 - Patente K treatment for some free food or free alcohol cases where public pages do not make the operational path fully clear.
 - Formulaire A/B role in the current online Patente K workflow when public sources do not state whether upload is required.
-- Police locale authorization deadline where Ville de Fribourg public pages do not provide a precise lead time.
 - Formulaire B for `manifestation d'importance`: no objective public threshold is confirmed for automatic triggering.
 - Public event on private venue: Police locale authorization may be needed, but V0.1 does not infer it automatically without authority confirmation.
 

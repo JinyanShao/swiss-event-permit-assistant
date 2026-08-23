@@ -46,7 +46,7 @@ public sealed class EventRulesEvaluatorTests
     }
 
     [Fact]
-    public void Mid_size_cooked_food_sold_requires_patente_k_but_police_deadline_remains_unconfirmed()
+    public void Mid_size_cooked_food_sold_requires_patente_k_and_police_deadline_is_30_days()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 500) with
         {
@@ -54,12 +54,12 @@ public sealed class EventRulesEvaluatorTests
         });
 
         AssertAction(result, "ACT-PATENTE-K");
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED" && deadline.Status == DeadlineStatus.Unconfirmed);
-        Assert.DoesNotContain(result.Deadlines, deadline => deadline.Id == "DL-POLICE-30");
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-30" && deadline.Date == new DateOnly(2026, 9, 10));
+        Assert.DoesNotContain(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED");
     }
 
     [Fact]
-    public void Mid_size_free_beverages_require_smart_check_plus_but_not_inferred_police_deadline()
+    public void Mid_size_free_beverages_require_smart_check_plus_with_30_day_deadline()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 500) with
         {
@@ -68,8 +68,8 @@ public sealed class EventRulesEvaluatorTests
 
         var smart = Assert.Single(result.Actions, action => action.Id == "ACT-SMART-CHECK");
         Assert.Equal("Smart Check Plus", smart.Title);
-        Assert.Equal(DeadlineStatus.Unconfirmed, smart.Deadline?.Status);
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED");
+        Assert.Equal(new DateOnly(2026, 9, 10), smart.Deadline?.Date);
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-30");
     }
 
     [Fact]
@@ -82,8 +82,10 @@ public sealed class EventRulesEvaluatorTests
 
         AssertAction(result, "ACT-PATENTE-K");
         Assert.Contains(result.Actions, action => action.Id == "ACT-SMART-CHECK" && action.Title == "Smart Event Plus");
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-SMART-60" && deadline.Date == new DateOnly(2026, 8, 11));
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-60" && deadline.Date == new DateOnly(2026, 8, 11));
         AssertConfirmation(result, "CONF-FORM-B");
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED");
+        Assert.DoesNotContain(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED");
     }
 
     [Fact]
@@ -96,6 +98,7 @@ public sealed class EventRulesEvaluatorTests
         });
 
         AssertNoAction(result, "ACT-PATENTE-K");
+        AssertNoAction(result, "ACT-POLICE-LOCALE");
         AssertConfirmation(result, "CONF-PRIVATE-POLICE");
     }
 
@@ -110,6 +113,7 @@ public sealed class EventRulesEvaluatorTests
 
         AssertAction(result, "ACT-PATENTE-K");
         AssertDocument(result, "DOC-OWNER-AUTHORIZATION");
+        AssertNoAction(result, "ACT-POLICE-LOCALE");
     }
 
     [Fact]
@@ -121,7 +125,23 @@ public sealed class EventRulesEvaluatorTests
         });
 
         AssertNoAction(result, "ACT-PATENTE-K");
+        AssertAction(result, "ACT-SMART-CHECK");
         AssertConfirmation(result, "CONF-FREE-FOOD-PATENTE");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
+    }
+
+    [Fact]
+    public void Food_only_sold_in_public_space_triggers_sustainability_action()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            FoodMode = FoodMode.CookedFoodSold
+        });
+
+        var smart = Assert.Single(result.Actions, action => action.Id == "ACT-SMART-CHECK");
+        Assert.Equal("Smart Check", smart.Title);
+        Assert.Equal("DL-SMART-20", smart.Deadline?.Id);
+        Assert.Equal(new DateOnly(2026, 9, 20), smart.Deadline?.Date);
         AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
     }
 
@@ -135,6 +155,7 @@ public sealed class EventRulesEvaluatorTests
 
         AssertAction(result, "ACT-PATENTE-K");
         AssertInfo(result, "INFO-ALCOHOL");
+        AssertInfo(result, "INFO-PATENTE-K-HOURS");
     }
 
     [Fact]

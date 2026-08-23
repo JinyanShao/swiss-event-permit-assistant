@@ -105,7 +105,7 @@ GitHub Actions runs the same restore, build, test, and publish checks on `main` 
 
 Swiss Event Permit Assistant is not affiliated with the Ville de Fribourg, Canton de Fribourg, prefectures, Police locale, or OCN. It organizes public information for preparation only. Users must confirm final requirements, forms, fees, deadlines, and submission instructions with the competent authority.
 
-Rule sources were last reviewed on 2026-08-14. Source freshness policy and unresolved interpretations are recorded in `docs/sources/README.md`.
+Rule sources were last reviewed on 2026-08-23. Source freshness policy and unresolved interpretations are recorded in `docs/sources/README.md`.
 
 ## Design Direction
 

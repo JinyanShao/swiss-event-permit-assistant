@@ -41,17 +41,22 @@ public sealed class EventRulesEvaluator
 
     private void AddPoliceLocaleRule(EventProfile profile, List<ActionRequirement> actions, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
+        if (profile.VenueKind != VenueKind.PublicSpace)
+        {
+            return;
+        }
+
         if (profile.ExpectedAttendance is null)
         {
-            AddConfirmation(confirmations, "CONF-ATTENDANCE", "Nombre de personnes à confirmer", "Le nombre attendu est nécessaire pour orienter la demande à la Police locale.", "Indiquer une estimation avant de déposer le dossier.", "Ville de Fribourg - Police locale", "SRC-VDF-LT200", sourceIds);
+            AddConfirmation(confirmations, "CONF-ATTENDANCE", "Nombre de personnes à confirmer", "Le nombre attendu est nécessaire pour orienter la demande à la Police locale.", "Indiquer une estimation avant de déposer le dossier.", "Ville de Fribourg - Police locale", "SRC-VDF-ENTRY", sourceIds);
             return;
         }
 
         var (sourceId, deadline) = profile.ExpectedAttendance < 200
             ? ("SRC-VDF-LT200", CreateDaysBefore("DL-POLICE-20", "Autorisation Police locale", profile.EventDate, 20, "SRC-VDF-LT200"))
             : profile.ExpectedAttendance <= 1000
-                ? ("SRC-VDF-200-1000", CreateUnconfirmed("DL-POLICE-UNCONFIRMED", "Autorisation Police locale", "SRC-VDF-200-1000"))
-                : ("SRC-VDF-GT1000", CreateUnconfirmed("DL-POLICE-UNCONFIRMED", "Autorisation Police locale", "SRC-VDF-GT1000"));
+                ? ("SRC-VDF-200-1000", CreateDaysBefore("DL-POLICE-30", "Autorisation Police locale", profile.EventDate, 30, "SRC-VDF-200-1000"))
+                : ("SRC-VDF-GT1000", CreateDaysBefore("DL-POLICE-60", "Autorisation Police locale", profile.EventDate, 60, "SRC-VDF-GT1000"));
 
         Use(sourceIds, sourceId);
         deadlines.AddUnique(deadline);
@@ -71,6 +76,7 @@ public sealed class EventRulesEvaluator
             deadlines.AddUnique(deadline);
             actions.AddUnique(new ActionRequirement("ACT-PATENTE-K", "Patente K", RequirementStatus.Required, "Préfecture du district", "Vous avez indiqué une vente de boissons, d’alcool ou de nourriture.", "SRC-FR-PATENTE-K", deadline));
             information.AddUnique(new InformationItem("INFO-EGOV", "Démarche en ligne", "La Patente K se dépose via egov.fr.ch avec inscription.", "SRC-FR-PATENTE-K"));
+            information.AddUnique(new InformationItem("INFO-PATENTE-K-HOURS", "Horaires de la manifestation", "La demande de Patente K doit inclure les horaires de la manifestation. V0.1 rappelle cette information sans demander une heure de début séparée.", "SRC-FR-PATENTE-K"));
 
             if (profile.VenueKind == VenueKind.PrivateVenue)
             {
@@ -105,24 +111,24 @@ public sealed class EventRulesEvaluator
         }
     }
 
-    private static void AddSmartAndReuseRules(EventProfile profile, List<ActionRequirement> actions, List<InformationItem> information, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
+    private void AddSmartAndReuseRules(EventProfile profile, List<ActionRequirement> actions, List<InformationItem> information, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
         var beveragesServed = profile.BeverageMode is BeverageMode.BeveragesSold or BeverageMode.BeveragesFree or BeverageMode.NotSure;
         var foodServed = profile.FoodMode is FoodMode.CookedFoodSold or FoodMode.OtherFoodSoldOrUnsure or FoodMode.FoodFree or FoodMode.NotSure;
 
         if ((beveragesServed || foodServed) && profile.VenueKind == VenueKind.PublicSpace)
         {
-            information.AddUnique(new InformationItem("INFO-REUSABLE-TABLEWARE", "Vaisselle réutilisable", "Les manifestations qui servent des mets ou boissons peuvent être soumises aux exigences de durabilité de la Ville.", SourceForAttendance(profile.ExpectedAttendance)));
-            Use(sourceIds, SourceForAttendance(profile.ExpectedAttendance));
+            information.AddUnique(new InformationItem("INFO-REUSABLE-TABLEWARE", "Vaisselle réutilisable", "La Ville prévoit l'utilisation de vaisselle réutilisable pour les manifestations servant des mets et/ou des boissons; les cas d'exemption doivent être vérifiés dans la directive.", "SRC-VDF-DURABILITY"));
+            Use(sourceIds, "SRC-VDF-DURABILITY");
         }
 
-        if (profile.VenueKind == VenueKind.PublicSpace && beveragesServed)
+        if (profile.VenueKind == VenueKind.PublicSpace && (beveragesServed || foodServed))
         {
             var smartAction = SmartAction(profile.ExpectedAttendance);
-            var deadline = CreateUnconfirmed("DL-SMART-UNCONFIRMED", smartAction, SourceForAttendance(profile.ExpectedAttendance));
+            var deadline = CreateDaysBefore(SmartDeadlineId(profile.ExpectedAttendance), smartAction, profile.EventDate, SmartDeadlineDays(profile.ExpectedAttendance), "SRC-VDF-DURABILITY");
             deadlines.AddUnique(deadline);
-            actions.AddUnique(new ActionRequirement("ACT-SMART-CHECK", smartAction, RequirementStatus.Required, "Ville de Fribourg", "Vous avez indiqué des boissons dans l’espace public.", SourceForAttendance(profile.ExpectedAttendance), deadline));
-            Use(sourceIds, SourceForAttendance(profile.ExpectedAttendance));
+            actions.AddUnique(new ActionRequirement("ACT-SMART-CHECK", smartAction, RequirementStatus.Required, "Ville de Fribourg", "Vous avez indiqué des mets ou des boissons dans l’espace public.", "SRC-VDF-DURABILITY", deadline));
+            Use(sourceIds, "SRC-VDF-DURABILITY");
         }
 
         if (profile.VenueKind == VenueKind.NotSure)
@@ -277,6 +283,20 @@ public sealed class EventRulesEvaluator
             : attendance <= 1000
                 ? "Smart Check Plus"
                 : "Smart Event Plus";
+
+    private static int SmartDeadlineDays(int? attendance) =>
+        attendance is null || attendance < 200
+            ? 20
+            : attendance <= 1000
+                ? 30
+                : 60;
+
+    private static string SmartDeadlineId(int? attendance) =>
+        attendance is null || attendance < 200
+            ? "DL-SMART-20"
+            : attendance <= 1000
+                ? "DL-SMART-30"
+                : "DL-SMART-60";
 
     private static void AddConfirmation(List<ConfirmationItem> confirmations, string id, string title, string reason, string whatToDo, string authority, string sourceId, HashSet<string> sourceIds)
     {
