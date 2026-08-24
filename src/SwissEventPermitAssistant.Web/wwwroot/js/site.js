@@ -1,6 +1,14 @@
 ﻿const draftKey = "sepa.assessmentDraft.v1";
 const resultKey = "sepa.lastAssessment.v1";
 
+document.querySelectorAll("[data-analytics-event]").forEach((link) => {
+  link.addEventListener("click", () => {
+    if (typeof window.plausible === "function") {
+      window.plausible(link.dataset.analyticsEvent);
+    }
+  });
+});
+
 const form = document.querySelector("#assessmentForm");
 
 if (form) {

@@ -1,8 +1,45 @@
 ﻿@page
 @model PrivacyModel
 @{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Confidentialité";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<section class="notice-block">
+    <p class="eyebrow">Confidentialité</p>
+    <h1>Utilisation des données</h1>
+
+    <p>
+        Swiss Event Permit Assistant est un outil indépendant de préparation.
+        Il ne demande pas de compte et ne stocke pas de dossier sur le serveur.
+    </p>
+
+    <h2>Questionnaire</h2>
+    <p>
+        Les réponses au questionnaire servent uniquement à calculer le résultat affiché.
+        Elles ne sont pas envoyées à un système d’analyse et ne sont pas conservées dans une base de données.
+    </p>
+
+    <h2>Brouillon local</h2>
+    <p>
+        Le navigateur peut conserver un brouillon du questionnaire dans son localStorage afin de retrouver les réponses sur le même appareil.
+        Ce stockage reste dans le navigateur de l’utilisateur.
+    </p>
+
+    <h2>Mesure d’usage anonyme</h2>
+    <p>
+        Le site utilise Plausible Analytics pour mesurer l’usage général: pages consultées, début du questionnaire, affichage du résultat,
+        clics vers les sources officielles et clics sur les liens de retour. Plausible ne dépose pas de cookies et ne conserve pas les adresses IP brutes.
+        Les adresses IP peuvent être traitées brièvement par Plausible pour produire des statistiques agrégées.
+    </p>
+
+    <h2>Liens de campagne</h2>
+    <p>
+        Certains liens de partage peuvent contenir des paramètres UTM, par exemple <code>utm_source</code>, <code>utm_medium</code> et <code>utm_campaign</code>.
+        Ils servent à comprendre quel canal de diffusion a généré une visite, sans identifier une personne.
+    </p>
+
+    <h2>Retour utilisateur</h2>
+    <p>
+        Le lien de retour ouvre un email. Le contenu envoyé dépend de ce que l’utilisateur choisit d’écrire dans son client email.
+    </p>
+</section>
