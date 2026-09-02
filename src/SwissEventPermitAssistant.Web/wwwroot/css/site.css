@@ -664,6 +664,25 @@ input[type="number"]:focus,
   margin-top: 28px;
 }
 
+.resource-links {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.resource-links ul {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resource-links a {
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
 .notice-block {
   max-width: 720px;
   padding: 34px;

@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Html
 @using System.Net
 @using SwissEventPermitAssistant.Domain.Results
+@using SwissEventPermitAssistant.Domain.Sources
 @model SwissEventPermitAssistant.Web.Pages.ResultsModel
 @{
     ViewData["Title"] = "Résultat";
@@ -73,6 +74,7 @@ else
                                 <p><strong>Délai.</strong> @FormatDate(action.Deadline.Date) · @action.Deadline.Basis</p>
                             }
                             <p><strong>Pourquoi ?</strong> @action.Reason</p>
+                            @ResourceLinks(OfficialResourceCatalog.For(action))
                             @SourceDisclosure(action.SourceId)
                         </div>
                     </article>
@@ -92,6 +94,7 @@ else
                             {
                                 <p class="metadata">Déclenché par plusieurs règles.</p>
                             }
+                            @ResourceLinks(OfficialResourceCatalog.For(document))
                             @SourceDisclosure(document.SourceId)
                         </div>
                     </article>
@@ -107,6 +110,7 @@ else
                         <div>
                             <h3>@info.Title</h3>
                             <p>@info.Text</p>
+                            @ResourceLinks(OfficialResourceCatalog.For(info))
                             @SourceDisclosure(info.SourceId)
                         </div>
                     </article>
@@ -127,6 +131,7 @@ else
                         <p>@confirmation.Reason</p>
                         <p><strong>À faire.</strong> @confirmation.WhatToDo</p>
                         <p class="metadata">@confirmation.Authority</p>
+                        @ResourceLinks(OfficialResourceCatalog.For(confirmation))
                         @SourceDisclosure(confirmation.SourceId)
                     </article>
                 }
@@ -195,5 +200,29 @@ else
             </details>
             """;
         return new HtmlString(html);
+    }
+
+    private static IHtmlContent ResourceLinks(IReadOnlyList<OfficialResource> resources)
+    {
+        if (resources.Count == 0)
+        {
+            return HtmlString.Empty;
+        }
+
+        var links = string.Join(
+            string.Empty,
+            resources.Select(resource =>
+                $"""
+                <li><a href="{WebUtility.HtmlEncode(resource.Url.ToString())}" target="_blank" rel="noreferrer">{WebUtility.HtmlEncode(resource.Label)} →</a></li>
+                """));
+
+        return new HtmlString($"""
+            <div class="resource-links" aria-label="Ressources officielles utiles">
+                <p class="metadata">Ressource officielle</p>
+                <ul>
+                    {links}
+                </ul>
+            </div>
+            """);
     }
 }
