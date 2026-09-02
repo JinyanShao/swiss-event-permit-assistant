@@ -1,5 +1,8 @@
 # Swiss Event Permit Assistant
 
+[![CI](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/JinyanShao/swiss-event-permit-assistant)](https://github.com/JinyanShao/swiss-event-permit-assistant/releases/latest)
+
 **[Live demo](https://sepa-fribourg-jinyan.azurewebsites.net)** · [License: MIT](LICENSE)
 
 V0.1 pilot for preparing temporary event permit dossiers for the Ville de Fribourg.
@@ -84,26 +87,17 @@ Run the web app:
 dotnet run --project src/SwissEventPermitAssistant.Web
 ```
 
-## Production Readiness
+## Deployment and Operations
 
-The application has no server-side dossier storage, no login, and no official submission integration in V0.1. Production deployments should set `ASPNETCORE_ENVIRONMENT=Production` and expose the application through HTTPS.
+The current public demo runs on Azure App Service. See [docs/deployment.md](docs/deployment.md) for production deployment and release procedures, and [docs/operations.md](docs/operations.md) for local development, testing, health checks, and maintenance.
 
-Health check:
+GitHub Actions runs restore, build, test, and publish checks on every push and pull request to `main` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
-```bash
-curl https://your-host.example/healthz
-```
+## Documentation
 
-Release verification:
-
-```bash
-dotnet restore
-dotnet build SwissEventPermitAssistant.slnx --configuration Release --no-restore
-dotnet test SwissEventPermitAssistant.slnx --configuration Release --no-build
-dotnet publish src/SwissEventPermitAssistant.Web/SwissEventPermitAssistant.Web.csproj --configuration Release --output ./artifacts/publish
-```
-
-GitHub Actions runs the same restore, build, test, and publish checks on `main` and pull requests.
+- [docs/deployment.md](docs/deployment.md) — production deployment and release procedures
+- [docs/operations.md](docs/operations.md) — local development, testing, health checks, and maintenance
+- [docs/sources/README.md](docs/sources/README.md) — official source inventory and freshness policy
 
 ## Disclaimer And Source Freshness
 
