@@ -59,6 +59,10 @@ tests/
   SwissEventPermitAssistant.Tests/
     xUnit tests for domain rules and deadline behavior
 docs/
+  operations.md
+    Local development, testing, and maintenance
+  deployment.md
+    Azure production deployment
   sources/
     Official source inventory and checked dates
   product/

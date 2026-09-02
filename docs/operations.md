@@ -1,6 +1,6 @@
 # Operations
 
-This document describes how to run, verify, and deploy Swiss Event Permit Assistant.
+How to run, test, and maintain Swiss Event Permit Assistant. For shipping a release to Azure, see [deployment.md](deployment.md).
 
 ## Local Development
 
@@ -32,40 +32,13 @@ dotnet publish src/SwissEventPermitAssistant.Web/SwissEventPermitAssistant.Web.c
   --output ./artifacts/publish
 ```
 
-## Production Deployment
-
-The current public deployment runs on Azure App Service.
-
-Production URL:
-
-```text
-https://sepa-fribourg-jinyan.azurewebsites.net
-```
-
-Health endpoint:
-
-```text
-https://sepa-fribourg-jinyan.azurewebsites.net/healthz
-```
-
-The production environment must use:
-
-```text
-ASPNETCORE_ENVIRONMENT=Production
-```
-
-The application is deployed over HTTPS and does not store permit dossiers on the server.
-
-## Deployment Verification
-
-After deployment, verify the application with:
+## Production Health Check
 
 ```bash
-curl -i https://sepa-fribourg-jinyan.azurewebsites.net/
 curl -i https://sepa-fribourg-jinyan.azurewebsites.net/healthz
 ```
 
-The health endpoint should return a successful response.
+The endpoint should return a successful response. The application is deployed over HTTPS and does not store permit dossiers on the server.
 
 ## Official Source Maintenance
 
