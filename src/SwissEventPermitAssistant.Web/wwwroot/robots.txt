@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sepa-fribourg-jinyan.azurewebsites.net/sitemap.xml

@@ -2,6 +2,16 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Préparer une manifestation";
+    ViewData["PageTitle"] = "Préparer une manifestation à Fribourg | Swiss Event Permit Assistant";
+}
+
+@section Head {
+    <meta name="description" content="Outil gratuit et indépendant pour préparer une manifestation en Ville de Fribourg: démarches possibles, délais, documents et liens vers les sources officielles." />
+    <link rel="canonical" href="https://sepa-fribourg-jinyan.azurewebsites.net/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Préparer une manifestation à Fribourg" />
+    <meta property="og:description" content="Un outil gratuit et indépendant pour identifier les démarches, délais, documents et sources officielles utiles en Ville de Fribourg." />
+    <meta property="og:url" content="https://sepa-fribourg-jinyan.azurewebsites.net/" />
 }
 
 <section class="landing-grid">
@@ -9,11 +19,12 @@
         <p class="eyebrow">Ville de Fribourg · Manifestations temporaires</p>
         <h1>Préparer une manifestation à Fribourg</h1>
         <p class="lead">
-            Décrivez votre manifestation. L’outil indique les démarches, documents,
-            délais et points à confirmer à partir de sources officielles publiques.
+            Un assistant gratuit et indépendant pour vérifier, avant de contacter les autorités,
+            quelles démarches peuvent concerner votre manifestation en Ville de Fribourg.
         </p>
         <div class="action-line">
             <a class="button button-primary" asp-page="/Assessment">Commencer l’évaluation</a>
+            <p class="source-note">Aucun compte à créer. Rien n’est envoyé aux autorités.</p>
         </div>
     </div>
 
@@ -23,8 +34,16 @@
             <p>Ville de Fribourg uniquement. Les autres communes doivent être confirmées séparément.</p>
         </section>
         <section>
+            <h2>Sources suivies</h2>
+            <p>Ville de Fribourg, Canton de Fribourg et OCN. Chaque résultat renvoie vers les sources officielles utilisées.</p>
+        </section>
+        <section>
             <h2>Service indépendant</h2>
-            <p>Ce service n’est pas un site officiel de la Ville ou du Canton.</p>
+            <p>Cet outil n’est pas un site officiel et ne remplace pas la décision de l’autorité compétente.</p>
+        </section>
+        <section>
+            <h2>Sources officielles</h2>
+            <p>Vérifiées le 23.08.2026.</p>
         </section>
         <section>
             <h2>À préparer</h2>

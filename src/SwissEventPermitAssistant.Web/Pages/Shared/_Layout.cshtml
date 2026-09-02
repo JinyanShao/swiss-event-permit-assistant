@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Swiss Event Permit Assistant</title>
+    <title>@(ViewData["PageTitle"] ?? $"{ViewData["Title"]} - Swiss Event Permit Assistant")</title>
+    @await RenderSectionAsync("Head", required: false)
     <script type="importmap"></script>
     <script defer data-domain="sepa-fribourg-jinyan.azurewebsites.net" src="https://plausible.io/js/script.outbound-links.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
