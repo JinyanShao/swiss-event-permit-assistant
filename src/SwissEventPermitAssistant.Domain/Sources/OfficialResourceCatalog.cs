@@ -52,7 +52,7 @@ public static class OfficialResourceCatalog
 
     private static readonly OfficialResource PatenteKOnlineGuide = new(
         "Lire le guide de demande en ligne Patente K",
-        new Uri("https://www.fr.ch/vie-quotidienne/demarches-et-documents/manifestations-temporaires-patente-k"),
+        new Uri("https://www.fr.ch/document/530631"),
         OfficialResourceType.Guide,
         ResourceCheckedDate);
 
@@ -87,8 +87,6 @@ public static class OfficialResourceCatalog
     public static IReadOnlyList<OfficialResource> For(InformationItem information) =>
         information.Id switch
         {
-            "INFO-EGOV" => [PatenteKInformation, PatenteKOnlineGuide],
-            "INFO-PATENTE-K-HOURS" => [PatenteKInformation],
             _ => []
         };
 

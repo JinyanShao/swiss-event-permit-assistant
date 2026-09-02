@@ -41,7 +41,8 @@ Resource links were checked on 2026-09-02. This resource-link check does not upd
 | `ACT-SMART-CHECK` + `DL-SMART-20` | Smart Check | Online application | https://www.smartevent.info/fr/user/login?destination=/fr/form/preavis-fribourg-200 | 2026-09-02 |
 | `ACT-SMART-CHECK` + `DL-SMART-30` | Smart Check Plus | Online application | https://www.smartevent.info/fr/user/login?destination=/fr/form/preavis-fribourg | 2026-09-02 |
 | `ACT-SMART-CHECK` + `DL-SMART-60` | Smart Event Plus | Online application | https://www.smartevent.info/fr/user/login?destination=/fr/form/request-plus | 2026-09-02 |
-| `ACT-PATENTE-K`, `INFO-EGOV`, `INFO-PATENTE-K-HOURS` | Patente K official information and online-application guidance | Official information / guide | https://www.fr.ch/vie-quotidienne/demarches-et-documents/manifestations-temporaires-patente-k | 2026-09-02 |
+| `ACT-PATENTE-K` | Patente K official information | Official information | https://www.fr.ch/vie-quotidienne/demarches-et-documents/manifestations-temporaires-patente-k | 2026-09-02 |
+| `ACT-PATENTE-K` | Patente K online-application guide | Guide | https://www.fr.ch/document/530631 | 2026-09-02 |
 | `CONF-FORM-B` | Formulaire B | Form | https://www.fr.ch/sites/default/files/2024-02/manifestation-temporaire--formulaire-complementaire-b-manifestation-d-importance.pdf | 2026-09-02 |
 | `ACT-OCN-SPORT` | OCN sport event application | Form | https://www.ocn.ch/sites/default/files/2025-10/2025_Demande_autorisation_manifestation_sportive.pdf | 2026-09-02 |
 | `ACT-OCN-SPORT` | OCN sport event aide-memoire | Guide | https://www.ocn.ch/sites/default/files/2024-08/Aidememoire_manifestations_sportives_20240819.pdf | 2026-09-02 |

@@ -54,8 +54,23 @@ public sealed class OfficialResourceCatalogTests
         var resources = OfficialResourceCatalog.For(action);
 
         Assert.Contains(resources, resource => resource.Label == "Voir les informations Patente K");
-        Assert.Contains(resources, resource => resource.Label == "Lire le guide de demande en ligne Patente K");
+        Assert.Contains(resources, resource => resource.Label == "Lire le guide de demande en ligne Patente K" && resource.Url.ToString() == "https://www.fr.ch/document/530631");
         Assert.DoesNotContain(resources, resource => resource.Url.ToString().Contains("Detail.aspx?id=1075", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Patente_k_information_items_do_not_repeat_action_resource_links()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            BeverageMode = BeverageMode.BeveragesSold
+        });
+
+        var egovInformation = Assert.Single(result.Information, information => information.Id == "INFO-EGOV");
+        var hoursInformation = Assert.Single(result.Information, information => information.Id == "INFO-PATENTE-K-HOURS");
+
+        Assert.Empty(OfficialResourceCatalog.For(egovInformation));
+        Assert.Empty(OfficialResourceCatalog.For(hoursInformation));
     }
 
     [Fact]
