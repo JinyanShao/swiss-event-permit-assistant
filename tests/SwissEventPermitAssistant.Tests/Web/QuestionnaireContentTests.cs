@@ -3,6 +3,94 @@ namespace SwissEventPermitAssistant.Tests.Web;
 public sealed class QuestionnaireContentTests
 {
     [Fact]
+    public void Commune_question_is_required_and_keeps_unknown_distinct_from_other()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("data-step=\"0\" data-title=\"Périmètre\"", content);
+        Assert.Contains("<legend>Périmètre</legend>", content);
+        Assert.Contains("La manifestation aura-t-elle lieu sur le territoire de la Ville de Fribourg ?", content);
+        Assert.Contains("name=\"commune\" value=\"VilleDeFribourg\" required", content);
+        Assert.Contains("name=\"commune\" value=\"Other\"", content);
+        Assert.Contains("name=\"commune\" value=\"Unknown\"", content);
+        Assert.Contains("data-step=\"1\" data-title=\"Manifestation\"", content);
+        Assert.Contains("commune: text(\"commune\") || \"Unknown\"", script);
+        Assert.DoesNotContain("commune: \"VilleDeFribourg\"", script);
+        Assert.Contains("currentStep === 0 && selectedCommune() !== \"VilleDeFribourg\"", script);
+    }
+
+    [Fact]
+    public void Draft_restoration_keeps_old_or_out_of_scope_drafts_on_scope_step()
+    {
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("let currentStep = 0;", script);
+        Assert.Contains("restoreDraft();", script);
+        Assert.Contains("if (selectedCommune() === \"VilleDeFribourg\")", script);
+        Assert.Contains("currentStep = Number(sessionStorage.getItem(\"sepa.currentStep\") || \"0\");", script);
+    }
+
+    [Fact]
+    public void Scope_only_submission_does_not_send_stale_event_details()
+    {
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("currentStep === 0 && selectedCommune() !== \"VilleDeFribourg\"", script);
+        Assert.Contains("? collectScopePayload()", script);
+        Assert.Contains("function collectScopePayload()", script);
+        Assert.Contains("commune: selectedCommune()", script);
+    }
+
+    [Fact]
+    public void Scope_result_uses_concise_notice_instead_of_normal_permit_layout()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Results.cshtml"));
+
+        Assert.Contains("else if (input.Commune != Commune.VilleDeFribourg)", content);
+        Assert.Contains("Périmètre V0.1", content);
+        Assert.Contains("Modifier ma réponse", content);
+    }
+
+    [Fact]
+    public void Expected_attendance_is_required_as_an_estimate()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
+
+        Assert.Contains("Une estimation suffit pour orienter les démarches et les délais applicables.", content);
+        Assert.Contains("name=\"expectedAttendance\" type=\"number\" min=\"1\" inputmode=\"numeric\" required", content);
+        Assert.Contains("Indiquez une estimation du nombre de personnes attendues.", content);
+    }
+
+    [Fact]
+    public void Food_drink_and_alcohol_questions_require_explicit_answers_without_preselection()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("name=\"beverageMode\" value=\"NoBeverages\" required", content);
+        Assert.Contains("name=\"foodMode\" value=\"NoFood\" required", content);
+        Assert.Contains("name=\"alcoholMode\" value=\"NoAlcohol\" required", content);
+        Assert.DoesNotContain("name=\"beverageMode\" value=\"NoBeverages\" checked", content);
+        Assert.DoesNotContain("name=\"foodMode\" value=\"NoFood\" checked", content);
+        Assert.DoesNotContain("name=\"alcoholMode\" value=\"NoAlcohol\" checked", content);
+        Assert.Contains("beverageMode: text(\"beverageMode\") || \"NotSure\"", script);
+        Assert.Contains("foodMode: text(\"foodMode\") || \"NotSure\"", script);
+        Assert.Contains("alcoholMode: text(\"alcoholMode\") || \"NotSure\"", script);
+    }
+
+    [Fact]
+    public void Client_validation_surfaces_all_required_radio_errors_and_focuses_first_invalid_field()
+    {
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("let firstInvalid = null;", script);
+        Assert.Contains("firstInvalid ??= field;", script);
+        Assert.Contains("firstInvalid?.focus();", script);
+        Assert.DoesNotContain("field.focus();", script);
+    }
+
+    [Fact]
     public void Venue_question_distinguishes_public_domain_from_private_venue_open_to_public()
     {
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));

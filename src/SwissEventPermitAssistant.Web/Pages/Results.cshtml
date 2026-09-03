@@ -19,6 +19,22 @@
         <a class="button button-primary" asp-page="/Assessment">Modifier mes réponses</a>
     </section>
 }
+else if (input.Commune != Commune.VilleDeFribourg)
+{
+    var scopeConfirmation = result.Confirmations.FirstOrDefault();
+    <section class="notice-block">
+        <p class="eyebrow">Périmètre V0.1</p>
+        <h1>@(scopeConfirmation?.Title ?? "Commune à vérifier")</h1>
+        <p>@(scopeConfirmation?.Reason ?? "V0.1 couvre uniquement les manifestations sur le territoire de la Ville de Fribourg.")</p>
+        @if (scopeConfirmation is not null)
+        {
+            <p><strong>À faire.</strong> @scopeConfirmation.WhatToDo</p>
+            <p class="metadata">@scopeConfirmation.Authority</p>
+            @SourceDisclosure(scopeConfirmation.SourceId)
+        }
+        <a class="button button-primary" asp-page="/Assessment">Modifier ma réponse</a>
+    </section>
+}
 else
 {
     <section class="result-layout">

@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SwissEventPermitAssistant.Domain\SwissEventPermitAssistant.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SwissEventPermitAssistant.Web\SwissEventPermitAssistant.Web.csproj" />
   </ItemGroup>
 
 </Project>

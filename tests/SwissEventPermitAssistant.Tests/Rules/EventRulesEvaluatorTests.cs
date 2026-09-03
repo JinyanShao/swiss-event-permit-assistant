@@ -167,11 +167,14 @@ public sealed class EventRulesEvaluatorTests
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 80) with
         {
+            BeverageMode = BeverageMode.NoBeverages,
             AlcoholMode = AlcoholMode.AlcoholSold
         });
 
         AssertAction(result, "ACT-PATENTE-K");
+        AssertAction(result, "ACT-SMART-CHECK");
         AssertInfo(result, "INFO-ALCOHOL");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
         AssertInfo(result, "INFO-PATENTE-K-HOURS");
     }
 
@@ -180,12 +183,15 @@ public sealed class EventRulesEvaluatorTests
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 80) with
         {
+            BeverageMode = BeverageMode.NoBeverages,
             AlcoholMode = AlcoholMode.AlcoholFree
         });
 
         AssertNoAction(result, "ACT-PATENTE-K");
+        AssertAction(result, "ACT-SMART-CHECK");
         AssertConfirmation(result, "CONF-FREE-ALCOHOL-PATENTE");
         AssertInfo(result, "INFO-ALCOHOL");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
     }
 
     [Fact]
@@ -293,6 +299,37 @@ public sealed class EventRulesEvaluatorTests
     }
 
     [Fact]
+    public void Unknown_attendance_with_confirmed_drinks_does_not_guess_smart_band()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: null) with
+        {
+            BeverageMode = BeverageMode.BeveragesFree
+        });
+
+        AssertNoAction(result, "ACT-SMART-CHECK");
+        Assert.DoesNotContain(result.Deadlines, deadline => deadline.Id.StartsWith("DL-SMART-", StringComparison.Ordinal));
+        AssertConfirmation(result, "CONF-ATTENDANCE");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
+    }
+
+    [Theory]
+    [InlineData(150, "Smart Check", "DL-SMART-20")]
+    [InlineData(500, "Smart Check Plus", "DL-SMART-30")]
+    [InlineData(1200, "Smart Event Plus", "DL-SMART-60")]
+    public void Smart_check_thresholds_remain_20_30_60_days(int attendance, string expectedTitle, string expectedDeadlineId)
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: attendance) with
+        {
+            BeverageMode = BeverageMode.BeveragesFree
+        });
+
+        var smart = Assert.Single(result.Actions, action => action.Id == "ACT-SMART-CHECK");
+        Assert.Equal(expectedTitle, smart.Title);
+        Assert.Equal(expectedDeadlineId, smart.Deadline?.Id);
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == expectedDeadlineId);
+    }
+
+    [Fact]
     public void Other_commune_is_out_of_scope_and_does_not_apply_ville_rules()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
@@ -302,7 +339,102 @@ public sealed class EventRulesEvaluatorTests
         });
 
         Assert.Empty(result.Actions);
-        AssertConfirmation(result, "CONF-SCOPE");
+        AssertConfirmation(result, "CONF-SCOPE-OUTSIDE");
+        Assert.DoesNotContain(result.Confirmations, confirmation => confirmation.Id == "CONF-SCOPE-UNKNOWN");
+    }
+
+    [Fact]
+    public void Unknown_commune_is_scope_to_confirm_and_does_not_apply_ville_rules()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            Commune = Commune.Unknown,
+            BeverageMode = BeverageMode.BeveragesSold
+        });
+
+        Assert.Empty(result.Actions);
+        AssertConfirmation(result, "CONF-SCOPE-UNKNOWN");
+        Assert.DoesNotContain(result.Confirmations, confirmation => confirmation.Id == "CONF-SCOPE-OUTSIDE");
+    }
+
+    [Fact]
+    public void Confirmed_ville_commune_applies_normal_ville_rules()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            Commune = Commune.VilleDeFribourg
+        });
+
+        AssertAction(result, "ACT-POLICE-LOCALE");
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-20");
+    }
+
+    [Fact]
+    public void Alcohol_sold_counts_as_confirmed_beverage_service_for_sustainability()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            BeverageMode = BeverageMode.NoBeverages,
+            AlcoholMode = AlcoholMode.AlcoholSold
+        });
+
+        AssertAction(result, "ACT-SMART-CHECK");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
+    }
+
+    [Fact]
+    public void Alcohol_free_counts_as_confirmed_beverage_service_for_sustainability()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            BeverageMode = BeverageMode.NoBeverages,
+            AlcoholMode = AlcoholMode.AlcoholFree
+        });
+
+        AssertAction(result, "ACT-SMART-CHECK");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
+    }
+
+    [Theory]
+    [InlineData("beverage")]
+    [InlineData("food")]
+    [InlineData("alcohol")]
+    public void Food_drink_or_alcohol_not_sure_alone_creates_confirmation_not_required_smart_action(string uncertainField)
+    {
+        var profile = DefaultProfile(expectedAttendance: 150) with
+        {
+            BeverageMode = BeverageMode.NoBeverages,
+            FoodMode = FoodMode.NoFood,
+            AlcoholMode = AlcoholMode.NoAlcohol
+        };
+
+        profile = uncertainField switch
+        {
+            "beverage" => profile with { BeverageMode = BeverageMode.NotSure },
+            "food" => profile with { FoodMode = FoodMode.NotSure },
+            "alcohol" => profile with { AlcoholMode = AlcoholMode.NotSure },
+            _ => profile
+        };
+
+        var result = Evaluate(profile);
+
+        AssertNoAction(result, "ACT-SMART-CHECK");
+        Assert.DoesNotContain(result.Information, item => item.Id == "INFO-REUSABLE-TABLEWARE");
+        AssertConfirmation(result, "CONF-SMART-REUSE");
+    }
+
+    [Fact]
+    public void Confirmed_food_or_drink_still_requires_smart_when_another_answer_is_not_sure()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 150) with
+        {
+            BeverageMode = BeverageMode.BeveragesFree,
+            FoodMode = FoodMode.NotSure,
+            AlcoholMode = AlcoholMode.NoAlcohol
+        });
+
+        AssertAction(result, "ACT-SMART-CHECK");
+        AssertInfo(result, "INFO-REUSABLE-TABLEWARE");
     }
 
     [Fact]

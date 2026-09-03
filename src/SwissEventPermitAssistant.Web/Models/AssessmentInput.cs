@@ -10,19 +10,20 @@ public sealed class AssessmentInput
     [Required]
     public DateOnly? EventDate { get; set; }
 
+    [Required]
     public int? ExpectedAttendance { get; set; }
 
-    public Commune Commune { get; set; } = Commune.VilleDeFribourg;
+    public Commune Commune { get; set; } = Commune.Unknown;
 
     public VenueKind VenueKind { get; set; } = VenueKind.NotSure;
 
     public YesNoUnknown IsPublicEvent { get; set; } = YesNoUnknown.Yes;
 
-    public BeverageMode BeverageMode { get; set; } = BeverageMode.NoBeverages;
+    public BeverageMode BeverageMode { get; set; } = BeverageMode.NotSure;
 
-    public FoodMode FoodMode { get; set; } = FoodMode.NoFood;
+    public FoodMode FoodMode { get; set; } = FoodMode.NotSure;
 
-    public AlcoholMode AlcoholMode { get; set; } = AlcoholMode.NoAlcohol;
+    public AlcoholMode AlcoholMode { get; set; } = AlcoholMode.NotSure;
 
     public YesNoUnknown HasAmplifiedMusicOrSound { get; set; } = YesNoUnknown.No;
 

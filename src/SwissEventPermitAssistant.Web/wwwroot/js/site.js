@@ -20,9 +20,13 @@ if (form) {
   const title = form.querySelector("#stepTitle");
   const progress = form.querySelector("#progressBar");
   const hiddenJson = form.querySelector("#assessmentJson");
-  let currentStep = Number(sessionStorage.getItem("sepa.currentStep") || "0");
+  let currentStep = 0;
 
   restoreDraft();
+  if (selectedCommune() === "VilleDeFribourg") {
+    currentStep = Number(sessionStorage.getItem("sepa.currentStep") || "0");
+  }
+
   showStep(currentStep, false);
   refreshConditionals();
 
@@ -39,6 +43,11 @@ if (form) {
 
   next?.addEventListener("click", () => {
     if (validateStep()) {
+      if (currentStep === 0 && selectedCommune() !== "VilleDeFribourg") {
+        form.requestSubmit();
+        return;
+      }
+
       showStep(currentStep + 1);
     }
   });
@@ -49,7 +58,9 @@ if (form) {
       return;
     }
 
-    const payload = collectPayload();
+    const payload = currentStep === 0 && selectedCommune() !== "VilleDeFribourg"
+      ? collectScopePayload()
+      : collectPayload();
     const json = JSON.stringify(payload);
     hiddenJson.value = json;
     localStorage.setItem(draftKey, json);
@@ -80,6 +91,7 @@ if (form) {
     const activeStep = steps[currentStep];
     const fields = Array.from(activeStep.querySelectorAll("[required]"));
     let valid = true;
+    let firstInvalid = null;
 
     activeStep.querySelectorAll(".field-error.is-visible").forEach((error) => {
       error.classList.remove("is-visible");
@@ -95,16 +107,17 @@ if (form) {
           valid = false;
           group.forEach((radio) => radio.setAttribute("aria-invalid", "true"));
           field.closest(".field-group")?.querySelector(".field-error")?.classList.add("is-visible");
-          field.focus();
+          firstInvalid ??= field;
         }
       } else if (!field.value) {
         valid = false;
         field.setAttribute("aria-invalid", "true");
         field.closest(".field")?.querySelector(".field-error")?.classList.add("is-visible");
-        field.focus();
+        firstInvalid ??= field;
       }
     }
 
+    firstInvalid?.focus();
     return valid;
   }
 
@@ -133,12 +146,12 @@ if (form) {
       eventName: text("eventName"),
       eventDate: text("eventDate"),
       expectedAttendance: number("expectedAttendance"),
-      commune: "VilleDeFribourg",
+      commune: text("commune") || "Unknown",
       venueKind: text("venueKind") || "NotSure",
       isPublicEvent: text("isPublicEvent") || "Yes",
-      beverageMode: text("beverageMode") || "NoBeverages",
-      foodMode: text("foodMode") || "NoFood",
-      alcoholMode: text("alcoholMode") || "NoAlcohol",
+      beverageMode: text("beverageMode") || "NotSure",
+      foodMode: text("foodMode") || "NotSure",
+      alcoholMode: text("alcoholMode") || "NotSure",
       hasAmplifiedMusicOrSound: text("hasAmplifiedMusicOrSound") || "No",
       eventEndTime: text("eventEndTime"),
       hasTemporaryInstallations: text("hasTemporaryInstallations") || "No",
@@ -150,6 +163,16 @@ if (form) {
       usesGasGrillOrHeater: text("usesGasGrillOrHeater") || "No",
       hasLiabilityInsurance: text("hasLiabilityInsurance") || "Unknown"
     };
+  }
+
+  function collectScopePayload() {
+    return {
+      commune: selectedCommune()
+    };
+  }
+
+  function selectedCommune() {
+    return form.querySelector('[name="commune"]:checked')?.value || "Unknown";
   }
 
   function saveDraft() {

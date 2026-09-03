@@ -45,9 +45,21 @@ public sealed class ResultsModel(EventRulesEvaluator evaluator, TimeProvider tim
             return Page();
         }
 
-        if (Input?.EventDate is null)
+        if (Input is null)
+        {
+            ModelState.AddModelError(string.Empty, "Les réponses n’ont pas pu être lues. Retournez au questionnaire.");
+            return Page();
+        }
+
+        if (Input.Commune == Domain.Profiles.Commune.VilleDeFribourg && Input.EventDate is null)
         {
             ModelState.AddModelError(string.Empty, "La date de la manifestation est requise.");
+            return Page();
+        }
+
+        if (Input.Commune == Domain.Profiles.Commune.VilleDeFribourg && Input.ExpectedAttendance is null)
+        {
+            ModelState.AddModelError(string.Empty, "Une estimation du nombre de personnes attendues est requise.");
             return Page();
         }
 

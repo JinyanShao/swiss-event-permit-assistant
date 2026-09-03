@@ -19,7 +19,21 @@
     </div>
     <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
 
-    <section class="question-step is-active" data-step="0" data-title="Manifestation" tabindex="-1">
+    <section class="question-step is-active" data-step="0" data-title="Périmètre" tabindex="-1">
+        <fieldset>
+            <legend>Périmètre</legend>
+            <div class="field-group" role="radiogroup" aria-labelledby="commune-label" aria-describedby="commune-help commune-error">
+                <p id="commune-label" class="question-label">La manifestation aura-t-elle lieu sur le territoire de la Ville de Fribourg ?</p>
+                <p id="commune-help" class="field-help">V0.1 couvre uniquement la Ville de Fribourg. En cas de doute, choisissez « Je ne sais pas ».</p>
+                <label class="choice"><input type="radio" name="commune" value="VilleDeFribourg" required /> Oui</label>
+                <label class="choice"><input type="radio" name="commune" value="Other" /> Non</label>
+                <label class="choice"><input type="radio" name="commune" value="Unknown" /> Je ne sais pas</label>
+                <span id="commune-error" class="field-error" role="alert">Sélectionnez une réponse.</span>
+            </div>
+        </fieldset>
+    </section>
+
+    <section class="question-step" data-step="1" data-title="Manifestation" tabindex="-1">
         <fieldset>
             <legend>Manifestation</legend>
             <label class="field">
@@ -40,13 +54,14 @@
             </label>
             <label class="field">
                 <span>Nombre de personnes attendues</span>
-                <span class="field-help">Une estimation suffit pour orienter les démarches.</span>
-                <input name="expectedAttendance" type="number" min="1" inputmode="numeric" />
+                <span id="expectedAttendance-help" class="field-help">Une estimation suffit pour orienter les démarches et les délais applicables.</span>
+                <input name="expectedAttendance" type="number" min="1" inputmode="numeric" required aria-describedby="expectedAttendance-help expectedAttendance-error" />
+                <span id="expectedAttendance-error" class="field-error" role="alert">Indiquez une estimation du nombre de personnes attendues.</span>
             </label>
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="1" data-title="Lieu" tabindex="-1">
+    <section class="question-step" data-step="2" data-title="Lieu" tabindex="-1">
         <fieldset>
             <legend>Lieu</legend>
             <div class="field-group" role="radiogroup" aria-labelledby="venueKind-label" aria-describedby="venueKind-help venueKind-error">
@@ -67,36 +82,39 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="2" data-title="Boissons et nourriture" tabindex="-1">
+    <section class="question-step" data-step="3" data-title="Boissons et nourriture" tabindex="-1">
         <fieldset>
             <legend>Boissons et nourriture</legend>
-            <div class="field-group">
-                <p class="question-label">Qu’en est-il des boissons ?</p>
-                <label class="choice"><input type="radio" name="beverageMode" value="NoBeverages" checked /> Aucune boisson</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="beverageMode-label" aria-describedby="beverageMode-error">
+                <p id="beverageMode-label" class="question-label">Qu’en est-il des boissons ?</p>
+                <label class="choice"><input type="radio" name="beverageMode" value="NoBeverages" required /> Aucune boisson</label>
                 <label class="choice"><input type="radio" name="beverageMode" value="BeveragesSold" /> Des boissons seront vendues</label>
                 <label class="choice"><input type="radio" name="beverageMode" value="BeveragesFree" /> Des boissons seront offertes gratuitement</label>
                 <label class="choice"><input type="radio" name="beverageMode" value="NotSure" /> Je ne sais pas</label>
+                <span id="beverageMode-error" class="field-error" role="alert">Sélectionnez une réponse pour les boissons.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">Qu’en est-il de la nourriture ?</p>
-                <label class="choice"><input type="radio" name="foodMode" value="NoFood" checked /> Aucune nourriture</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="foodMode-label" aria-describedby="foodMode-error">
+                <p id="foodMode-label" class="question-label">Qu’en est-il de la nourriture ?</p>
+                <label class="choice"><input type="radio" name="foodMode" value="NoFood" required /> Aucune nourriture</label>
                 <label class="choice"><input type="radio" name="foodMode" value="CookedFoodSold" /> Des mets cuisinés seront vendus</label>
                 <label class="choice"><input type="radio" name="foodMode" value="OtherFoodSoldOrUnsure" /> Autre nourriture vendue</label>
                 <label class="choice"><input type="radio" name="foodMode" value="FoodFree" /> De la nourriture sera offerte gratuitement</label>
                 <label class="choice"><input type="radio" name="foodMode" value="NotSure" /> Je ne sais pas</label>
+                <span id="foodMode-error" class="field-error" role="alert">Sélectionnez une réponse pour la nourriture.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">Y aura-t-il des boissons alcoolisées ?</p>
-                <label class="choice"><input type="radio" name="alcoholMode" value="NoAlcohol" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="alcoholMode-label" aria-describedby="alcoholMode-error">
+                <p id="alcoholMode-label" class="question-label">Y aura-t-il des boissons alcoolisées ?</p>
+                <label class="choice"><input type="radio" name="alcoholMode" value="NoAlcohol" required /> Non</label>
                 <label class="choice"><input type="radio" name="alcoholMode" value="AlcoholSold" /> Oui, vendues</label>
                 <label class="choice"><input type="radio" name="alcoholMode" value="AlcoholFree" /> Oui, offertes gratuitement</label>
                 <label class="choice"><input type="radio" name="alcoholMode" value="NotSure" /> Je ne sais pas</label>
+                <span id="alcoholMode-error" class="field-error" role="alert">Sélectionnez une réponse pour les boissons alcoolisées.</span>
             </div>
             <p class="not-sure-note">Les réponses « Je ne sais pas » seront traitées comme des points à confirmer, pas comme des erreurs.</p>
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="3" data-title="Musique et installations" tabindex="-1">
+    <section class="question-step" data-step="4" data-title="Musique et installations" tabindex="-1">
         <fieldset>
             <legend>Musique et installations</legend>
             <div class="field-group">
@@ -121,7 +139,7 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="4" data-title="Circulation" tabindex="-1">
+    <section class="question-step" data-step="5" data-title="Circulation" tabindex="-1">
         <fieldset>
             <legend>Circulation</legend>
             <div class="field-group">
@@ -145,7 +163,7 @@
         </fieldset>
     </section>
 
-    <section class="question-step" data-step="5" data-title="Vérification" tabindex="-1">
+    <section class="question-step" data-step="6" data-title="Vérification" tabindex="-1">
         <fieldset>
             <legend>Vérification</legend>
             <div class="field-group">

@@ -3,7 +3,8 @@ namespace SwissEventPermitAssistant.Domain.Profiles;
 public enum Commune
 {
     VilleDeFribourg,
-    Other
+    Other,
+    Unknown
 }
 
 public enum VenueKind

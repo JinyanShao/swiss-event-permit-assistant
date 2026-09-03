@@ -22,9 +22,15 @@ public sealed class EventRulesEvaluator
         var deadlines = new List<Deadline>();
         var sourceIds = new HashSet<string>();
 
-        if (profile.Commune != Commune.VilleDeFribourg)
+        if (profile.Commune == Commune.Other)
         {
-            AddConfirmation(confirmations, "CONF-SCOPE", "Commune non couverte", "V0.1 couvre uniquement la Ville de Fribourg.", "Vérifier les exigences auprès de la commune compétente.", "Commune compétente", "SRC-VDF-LT200", sourceIds);
+            AddConfirmation(confirmations, "CONF-SCOPE-OUTSIDE", "Manifestation hors Ville de Fribourg", "V0.1 couvre uniquement les manifestations sur le territoire de la Ville de Fribourg.", "Vérifier les exigences auprès de la commune compétente.", "Commune compétente", "SRC-VDF-ENTRY", sourceIds);
+            return Build(actions, documents, information, confirmations, deadlines, sourceIds);
+        }
+
+        if (profile.Commune == Commune.Unknown)
+        {
+            AddConfirmation(confirmations, "CONF-SCOPE-UNKNOWN", "Commune à confirmer", "La commune de la manifestation n’est pas confirmée. V0.1 ne peut appliquer les règles Ville de Fribourg que si la manifestation a lieu sur son territoire.", "Confirmer le lieu exact avant de préparer les démarches.", "Commune compétente", "SRC-VDF-ENTRY", sourceIds);
             return Build(actions, documents, information, confirmations, deadlines, sourceIds);
         }
 
@@ -48,7 +54,7 @@ public sealed class EventRulesEvaluator
 
         if (profile.ExpectedAttendance is null)
         {
-            AddConfirmation(confirmations, "CONF-ATTENDANCE", "Nombre de personnes à confirmer", "Le nombre attendu est nécessaire pour orienter la demande à la Police locale.", "Indiquer une estimation avant de déposer le dossier.", "Ville de Fribourg - Police locale", "SRC-VDF-ENTRY", sourceIds);
+            AddConfirmation(confirmations, "CONF-ATTENDANCE", "Nombre de personnes à confirmer", "Le nombre attendu est nécessaire pour orienter les démarches et les délais applicables.", "Indiquer une estimation avant de déposer le dossier.", "Ville de Fribourg", "SRC-VDF-ENTRY", sourceIds);
             return;
         }
 
@@ -113,22 +119,39 @@ public sealed class EventRulesEvaluator
 
     private void AddSmartAndReuseRules(EventProfile profile, List<ActionRequirement> actions, List<InformationItem> information, List<ConfirmationItem> confirmations, List<Deadline> deadlines, HashSet<string> sourceIds)
     {
-        var beveragesServed = profile.BeverageMode is BeverageMode.BeveragesSold or BeverageMode.BeveragesFree or BeverageMode.NotSure;
-        var foodServed = profile.FoodMode is FoodMode.CookedFoodSold or FoodMode.OtherFoodSoldOrUnsure or FoodMode.FoodFree or FoodMode.NotSure;
+        var confirmedBeverageService = profile.BeverageMode is BeverageMode.BeveragesSold or BeverageMode.BeveragesFree
+            || profile.AlcoholMode is AlcoholMode.AlcoholSold or AlcoholMode.AlcoholFree;
+        var confirmedFoodService = profile.FoodMode is FoodMode.CookedFoodSold or FoodMode.OtherFoodSoldOrUnsure or FoodMode.FoodFree;
+        var confirmedFoodOrDrinkService = confirmedBeverageService || confirmedFoodService;
+        var foodOrDrinkUncertain = profile.BeverageMode == BeverageMode.NotSure
+            || profile.FoodMode == FoodMode.NotSure
+            || profile.AlcoholMode == AlcoholMode.NotSure;
 
-        if ((beveragesServed || foodServed) && profile.VenueKind == VenueKind.PublicSpace)
+        if (confirmedFoodOrDrinkService && profile.VenueKind == VenueKind.PublicSpace)
         {
             information.AddUnique(new InformationItem("INFO-REUSABLE-TABLEWARE", "Vaisselle réutilisable", "La Ville prévoit l'utilisation de vaisselle réutilisable pour les manifestations servant des mets et/ou des boissons; les cas d'exemption doivent être vérifiés dans la directive.", "SRC-VDF-DURABILITY"));
             Use(sourceIds, "SRC-VDF-DURABILITY");
         }
 
-        if (profile.VenueKind == VenueKind.PublicSpace && (beveragesServed || foodServed))
+        if (profile.VenueKind == VenueKind.PublicSpace && confirmedFoodOrDrinkService)
         {
-            var smartAction = SmartAction(profile.ExpectedAttendance);
-            var deadline = CreateDaysBefore(SmartDeadlineId(profile.ExpectedAttendance), smartAction, profile.EventDate, SmartDeadlineDays(profile.ExpectedAttendance), "SRC-VDF-DURABILITY");
+            if (profile.ExpectedAttendance is null)
+            {
+                AddConfirmation(confirmations, "CONF-ATTENDANCE", "Nombre de personnes à confirmer", "Le nombre attendu est nécessaire pour orienter les démarches et les délais applicables.", "Indiquer une estimation avant de déposer le dossier.", "Ville de Fribourg", "SRC-VDF-ENTRY", sourceIds);
+                return;
+            }
+
+            var attendance = profile.ExpectedAttendance.Value;
+            var smartAction = SmartAction(attendance);
+            var deadline = CreateDaysBefore(SmartDeadlineId(attendance), smartAction, profile.EventDate, SmartDeadlineDays(attendance), "SRC-VDF-DURABILITY");
             deadlines.AddUnique(deadline);
             actions.AddUnique(new ActionRequirement("ACT-SMART-CHECK", smartAction, RequirementStatus.Required, "Ville de Fribourg", "Vous avez indiqué des mets ou des boissons dans l’espace public.", "SRC-VDF-DURABILITY", deadline));
             Use(sourceIds, "SRC-VDF-DURABILITY");
+        }
+
+        if (profile.VenueKind == VenueKind.PublicSpace && !confirmedFoodOrDrinkService && foodOrDrinkUncertain)
+        {
+            AddConfirmation(confirmations, "CONF-SMART-REUSE", "Smart Check et vaisselle réutilisable à confirmer", "L’applicabilité du Smart Check et de la vaisselle réutilisable dépend de la présence effective de mets ou de boissons.", "Confirmer si des mets ou des boissons seront servis.", "Ville de Fribourg", "SRC-VDF-DURABILITY", sourceIds);
         }
 
         if (profile.VenueKind == VenueKind.NotSure)
@@ -277,22 +300,22 @@ public sealed class EventRulesEvaluator
                 ? "SRC-VDF-200-1000"
                 : "SRC-VDF-GT1000";
 
-    private static string SmartAction(int? attendance) =>
-        attendance is null || attendance < 200
+    private static string SmartAction(int attendance) =>
+        attendance < 200
             ? "Smart Check"
             : attendance <= 1000
                 ? "Smart Check Plus"
                 : "Smart Event Plus";
 
-    private static int SmartDeadlineDays(int? attendance) =>
-        attendance is null || attendance < 200
+    private static int SmartDeadlineDays(int attendance) =>
+        attendance < 200
             ? 20
             : attendance <= 1000
                 ? 30
                 : 60;
 
-    private static string SmartDeadlineId(int? attendance) =>
-        attendance is null || attendance < 200
+    private static string SmartDeadlineId(int attendance) =>
+        attendance < 200
             ? "DL-SMART-20"
             : attendance <= 1000
                 ? "DL-SMART-30"
