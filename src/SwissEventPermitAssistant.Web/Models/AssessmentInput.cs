@@ -44,8 +44,6 @@ public sealed class AssessmentInput
 
     public YesNoUnknown HasLiabilityInsurance { get; set; } = YesNoUnknown.Unknown;
 
-    public YesNoUnknown PrivateVenueOwnerAuthorizationAvailable { get; set; } = YesNoUnknown.Unknown;
-
     public EventProfile ToEventProfile(DateOnly defaultEventDate) =>
         new(
             Commune,
@@ -66,6 +64,5 @@ public sealed class AssessmentInput
             NeedsAdvertisingBannerOrPublicPosting,
             UsesGasGrillOrHeater,
             HasLiabilityInsurance,
-            PrivateVenueOwnerAuthorizationAvailable,
             EventName);
 }

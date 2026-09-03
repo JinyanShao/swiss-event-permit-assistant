@@ -148,8 +148,7 @@ if (form) {
       needsMunicipalMaterialOrDecorations: bool("needsMunicipalMaterialOrDecorations"),
       needsAdvertisingBannerOrPublicPosting: bool("needsAdvertisingBannerOrPublicPosting"),
       usesGasGrillOrHeater: text("usesGasGrillOrHeater") || "No",
-      hasLiabilityInsurance: text("hasLiabilityInsurance") || "Unknown",
-      privateVenueOwnerAuthorizationAvailable: text("privateVenueOwnerAuthorizationAvailable") || "Unknown"
+      hasLiabilityInsurance: text("hasLiabilityInsurance") || "Unknown"
     };
   }
 

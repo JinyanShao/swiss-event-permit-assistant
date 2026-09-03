@@ -89,17 +89,34 @@ public sealed class EventRulesEvaluatorTests
     }
 
     [Fact]
-    public void Private_public_event_without_sales_needs_police_confirmation_but_no_patente_k()
+    public void Private_public_event_is_not_treated_as_public_space()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 80) with
         {
             VenueKind = VenueKind.PrivateVenue,
-            IsPublicEvent = YesNoUnknown.Yes
+            IsPublicEvent = YesNoUnknown.Yes,
+            BeverageMode = BeverageMode.BeveragesFree
         });
 
         AssertNoAction(result, "ACT-PATENTE-K");
         AssertNoAction(result, "ACT-POLICE-LOCALE");
+        AssertNoAction(result, "ACT-SMART-CHECK");
         AssertConfirmation(result, "CONF-PRIVATE-POLICE");
+    }
+
+    [Fact]
+    public void Public_space_public_event_still_triggers_public_domain_rules()
+    {
+        var result = Evaluate(DefaultProfile(expectedAttendance: 80) with
+        {
+            VenueKind = VenueKind.PublicSpace,
+            IsPublicEvent = YesNoUnknown.Yes,
+            BeverageMode = BeverageMode.BeveragesFree
+        });
+
+        AssertAction(result, "ACT-POLICE-LOCALE");
+        AssertAction(result, "ACT-SMART-CHECK");
+        Assert.DoesNotContain(result.Confirmations, confirmation => confirmation.Id == "CONF-PRIVATE-POLICE");
     }
 
     [Fact]

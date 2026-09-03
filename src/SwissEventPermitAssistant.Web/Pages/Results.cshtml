@@ -1,6 +1,7 @@
 @page
 @using Microsoft.AspNetCore.Html
 @using System.Net
+@using SwissEventPermitAssistant.Domain.Profiles
 @using SwissEventPermitAssistant.Domain.Results
 @using SwissEventPermitAssistant.Domain.Sources
 @model SwissEventPermitAssistant.Web.Pages.ResultsModel
@@ -26,7 +27,8 @@ else
             <h1>Votre manifestation</h1>
             <p class="event-summary">
                 @(input.ExpectedAttendance?.ToString() ?? "Nombre à confirmer") personnes ·
-                @Display(input.VenueKind.ToString()) ·
+                Statut du lieu : @VenueStatusText(input.VenueKind) ·
+                Accès : @EventAccessText(input.IsPublicEvent) ·
                 @Display(input.BeverageMode.ToString()) ·
                 @input.EventDate?.ToString("dd.MM.yyyy")
             </p>
@@ -175,13 +177,24 @@ else
 
     private static string Display(string value) => value switch
     {
-        "PublicSpace" => "Espace public",
-        "PrivateVenue" => "Lieu privé",
-        "NotSure" => "Lieu à confirmer",
         "BeveragesSold" => "Boissons vendues",
         "BeveragesFree" => "Boissons offertes",
         "NoBeverages" => "Sans boissons",
         _ => value
+    };
+
+    private static string VenueStatusText(VenueKind venueKind) => venueKind switch
+    {
+        VenueKind.PublicSpace => "domaine public communal",
+        VenueKind.PrivateVenue => "lieu ou fonds privé",
+        _ => "à confirmer"
+    };
+
+    private static string EventAccessText(YesNoUnknown isPublicEvent) => isPublicEvent switch
+    {
+        YesNoUnknown.Yes => "ouverte au public",
+        YesNoUnknown.No => "non ouverte au public",
+        _ => "à confirmer"
     };
 
     private IHtmlContent SourceDisclosure(string sourceId)

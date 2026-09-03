@@ -64,5 +64,4 @@ public sealed record EventProfile(
     bool NeedsAdvertisingBannerOrPublicPosting = false,
     YesNoUnknown UsesGasGrillOrHeater = YesNoUnknown.No,
     YesNoUnknown HasLiabilityInsurance = YesNoUnknown.Yes,
-    YesNoUnknown PrivateVenueOwnerAuthorizationAvailable = YesNoUnknown.No,
     string? EventName = null);

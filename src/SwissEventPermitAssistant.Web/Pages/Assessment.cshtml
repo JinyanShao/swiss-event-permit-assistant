@@ -50,25 +50,19 @@
         <fieldset>
             <legend>Lieu</legend>
             <div class="field-group" role="radiogroup" aria-labelledby="venueKind-label" aria-describedby="venueKind-help venueKind-error">
-                <p id="venueKind-label" class="question-label">La manifestation aura-t-elle lieu dans l’espace public ?</p>
-                <p id="venueKind-help" class="field-help">Par exemple une rue, une place, un parc ou un espace accessible au public.</p>
-                <label class="choice"><input type="radio" name="venueKind" value="PublicSpace" required /> Oui, dans l’espace public</label>
-                <label class="choice"><input type="radio" name="venueKind" value="PrivateVenue" /> Non, sur un terrain ou dans un lieu privé</label>
+                <p id="venueKind-label" class="question-label">Où la manifestation aura-t-elle lieu ?</p>
+                <p id="venueKind-help" class="field-help">Par exemple, une rue, une place ou un parc lorsqu’ils relèvent du domaine public communal. Un lieu privé peut aussi être ouvert au public. En cas de doute, choisissez « Je ne sais pas ».</p>
+                <label class="choice"><input type="radio" name="venueKind" value="PublicSpace" required /> Sur le domaine public communal</label>
+                <label class="choice"><input type="radio" name="venueKind" value="PrivateVenue" /> Dans un lieu ou sur un fonds privé, par exemple un restaurant, un bar, une salle de concert ou un local associatif</label>
                 <label class="choice"><input type="radio" name="venueKind" value="NotSure" /> Je ne sais pas</label>
                 <span id="venueKind-error" class="field-error" role="alert">Sélectionnez une réponse.</span>
             </div>
             <div class="field-group">
                 <p class="question-label">La manifestation est-elle ouverte au public ?</p>
+                <p class="field-help">Cette réponse concerne l’accès à l’événement, pas le statut public ou privé du lieu.</p>
                 <label class="choice"><input type="radio" name="isPublicEvent" value="Yes" checked /> Oui</label>
                 <label class="choice"><input type="radio" name="isPublicEvent" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="isPublicEvent" value="Unknown" /> Je ne sais pas</label>
-            </div>
-            <div class="conditional" data-show-when="venueKind:PrivateVenue">
-                <p class="question-label">Avez-vous une autorisation signée du propriétaire ?</p>
-                <p class="field-help">Elle peut être nécessaire si une démarche officielle est requise pour un terrain privé.</p>
-                <label class="choice"><input type="radio" name="privateVenueOwnerAuthorizationAvailable" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="privateVenueOwnerAuthorizationAvailable" value="No" /> Non</label>
-                <label class="choice"><input type="radio" name="privateVenueOwnerAuthorizationAvailable" value="Unknown" checked /> Je ne sais pas</label>
             </div>
         </fieldset>
     </section>
