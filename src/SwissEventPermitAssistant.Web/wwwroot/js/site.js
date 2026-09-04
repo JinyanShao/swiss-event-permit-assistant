@@ -75,7 +75,7 @@ if (form) {
       step.setAttribute("aria-hidden", String(!active));
     });
 
-    counter.textContent = `${String(currentStep + 1).padStart(2, "0")} / ${String(steps.length).padStart(2, "0")}`;
+    counter.textContent = `Étape ${currentStep + 1} sur ${steps.length}`;
     title.textContent = steps[currentStep].dataset.title;
     progress.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
     previous.disabled = currentStep === 0;
