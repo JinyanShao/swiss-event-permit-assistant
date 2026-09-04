@@ -100,6 +100,19 @@ public sealed class QuestionnaireContentTests
     }
 
     [Fact]
+    public void Corrupt_browser_draft_is_discarded_instead_of_blocking_questionnaire_startup()
+    {
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("const payload = readStoredPayload(draftKey) ?? readStoredPayload(resultKey);", script);
+        Assert.Contains("function readStoredPayload(key)", script);
+        Assert.Contains("try {", script);
+        Assert.Contains("return JSON.parse(saved);", script);
+        Assert.Contains("localStorage.removeItem(key);", script);
+        Assert.Contains("return null;", script);
+    }
+
+    [Fact]
     public void Required_questions_show_visible_asterisk_marker()
     {
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));

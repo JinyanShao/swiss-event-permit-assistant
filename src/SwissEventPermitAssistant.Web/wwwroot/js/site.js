@@ -184,10 +184,9 @@ if (form) {
   }
 
   function restoreDraft() {
-    const saved = localStorage.getItem(draftKey) || localStorage.getItem(resultKey);
-    if (!saved) return null;
+    const payload = readStoredPayload(draftKey) ?? readStoredPayload(resultKey);
+    if (!payload) return null;
 
-    const payload = JSON.parse(saved);
     for (const [name, value] of Object.entries(payload)) {
       const fields = form.querySelectorAll(`[name="${name}"]`);
       fields.forEach((field) => {
@@ -202,6 +201,18 @@ if (form) {
     }
 
     return payload;
+  }
+
+  function readStoredPayload(key) {
+    const saved = localStorage.getItem(key);
+    if (!saved) return null;
+
+    try {
+      return JSON.parse(saved);
+    } catch {
+      localStorage.removeItem(key);
+      return null;
+    }
   }
 
   function clearRadioState() {
