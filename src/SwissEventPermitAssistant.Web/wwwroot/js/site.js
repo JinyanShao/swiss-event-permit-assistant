@@ -22,7 +22,11 @@ if (form) {
   const hiddenJson = form.querySelector("#assessmentJson");
   let currentStep = 0;
 
-  restoreDraft();
+  const restoredPayload = restoreDraft();
+  if (!restoredPayload) {
+    clearRadioState();
+  }
+
   if (selectedCommune() === "VilleDeFribourg") {
     currentStep = Number(sessionStorage.getItem("sepa.currentStep") || "0");
   }
@@ -181,7 +185,7 @@ if (form) {
 
   function restoreDraft() {
     const saved = localStorage.getItem(draftKey) || localStorage.getItem(resultKey);
-    if (!saved) return;
+    if (!saved) return null;
 
     const payload = JSON.parse(saved);
     for (const [name, value] of Object.entries(payload)) {
@@ -196,5 +200,13 @@ if (form) {
         }
       });
     }
+
+    return payload;
+  }
+
+  function clearRadioState() {
+    form.querySelectorAll('input[type="radio"]').forEach((field) => {
+      field.checked = false;
+    });
   }
 }

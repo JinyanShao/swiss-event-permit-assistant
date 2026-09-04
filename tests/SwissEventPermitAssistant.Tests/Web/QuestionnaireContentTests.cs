@@ -85,7 +85,11 @@ public sealed class QuestionnaireContentTests
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
         var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
 
+        Assert.Contains("novalidate autocomplete=\"off\"", content);
         Assert.DoesNotContain(" checked", content);
+        Assert.Contains("const restoredPayload = restoreDraft();", script);
+        Assert.Contains("if (!restoredPayload)", script);
+        Assert.Contains("clearRadioState();", script);
         Assert.Contains("isPublicEvent: text(\"isPublicEvent\") || \"Unknown\"", script);
         Assert.Contains("hasAmplifiedMusicOrSound: text(\"hasAmplifiedMusicOrSound\") || \"Unknown\"", script);
         Assert.Contains("hasTemporaryInstallations: text(\"hasTemporaryInstallations\") || \"Unknown\"", script);
