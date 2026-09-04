@@ -18,30 +18,42 @@ public sealed record OfficialResource(
 
 public static class OfficialResourceCatalog
 {
-    private static readonly DateOnly ResourceCheckedDate = new(2026, 9, 2);
+    private static readonly DateOnly ResourceCheckedDate = new(2026, 9, 4);
 
-    private static readonly OfficialResource PoliceLocaleForm = new(
-        "Remplir le formulaire Police locale",
-        new Uri("https://www.ville-fribourg.ch/form/po-manifestation"),
-        OfficialResourceType.OnlineApplication,
+    private static readonly OfficialResource VilleLessThan200 = new(
+        "Ouvrir la page officielle Ville",
+        new Uri("https://www.ville-fribourg.ch/organiser-manifestation/moins-de-200"),
+        OfficialResourceType.OfficialInformation,
+        ResourceCheckedDate);
+
+    private static readonly OfficialResource VilleFrom200To1000 = new(
+        "Ouvrir la page officielle Ville",
+        new Uri("https://www.ville-fribourg.ch/organiser-manifestation/200-a-1000"),
+        OfficialResourceType.OfficialInformation,
+        ResourceCheckedDate);
+
+    private static readonly OfficialResource VilleMoreThan1000 = new(
+        "Ouvrir la page officielle Ville",
+        new Uri("https://www.ville-fribourg.ch/organiser-manifestation/plus-de-1000"),
+        OfficialResourceType.OfficialInformation,
         ResourceCheckedDate);
 
     private static readonly OfficialResource SmartCheck = new(
-        "Ouvrir Smart Check",
-        new Uri("https://www.smartevent.info/fr/user/login?destination=/fr/form/preavis-fribourg-200"),
-        OfficialResourceType.OnlineApplication,
+        "Ouvrir la page Ville avec le lien Smart Check",
+        new Uri("https://www.ville-fribourg.ch/organiser-manifestation/moins-de-200"),
+        OfficialResourceType.OfficialInformation,
         ResourceCheckedDate);
 
     private static readonly OfficialResource SmartCheckPlus = new(
-        "Ouvrir Smart Check Plus",
-        new Uri("https://www.smartevent.info/fr/user/login?destination=/fr/form/preavis-fribourg"),
-        OfficialResourceType.OnlineApplication,
+        "Ouvrir la page Ville avec le lien Smart Check Plus",
+        new Uri("https://www.ville-fribourg.ch/organiser-manifestation/200-a-1000"),
+        OfficialResourceType.OfficialInformation,
         ResourceCheckedDate);
 
     private static readonly OfficialResource SmartEventPlus = new(
-        "Ouvrir Smart Event Plus",
-        new Uri("https://www.smartevent.info/fr/user/login?destination=/fr/form/request-plus"),
-        OfficialResourceType.OnlineApplication,
+        "Ouvrir la page Ville avec le lien Smart Event Plus",
+        new Uri("https://www.ville-fribourg.ch/organiser-manifestation/plus-de-1000"),
+        OfficialResourceType.OfficialInformation,
         ResourceCheckedDate);
 
     private static readonly OfficialResource PatenteKInformation = new(
@@ -77,7 +89,7 @@ public static class OfficialResourceCatalog
     public static IReadOnlyList<OfficialResource> For(ActionRequirement action) =>
         action.Id switch
         {
-            "ACT-POLICE-LOCALE" => [PoliceLocaleForm],
+            "ACT-POLICE-LOCALE" => [VillePageFor(action.SourceId)],
             "ACT-SMART-CHECK" => SmartResourcesFor(action),
             "ACT-PATENTE-K" => [PatenteKInformation, PatenteKOnlineGuide],
             "ACT-OCN-SPORT" => [OcnApplication, OcnGuide],
@@ -101,6 +113,14 @@ public static class OfficialResourceCatalog
         {
             "CONF-FORM-B" => [FormB],
             _ => []
+        };
+
+    private static OfficialResource VillePageFor(string sourceId) =>
+        sourceId switch
+        {
+            "SRC-VDF-200-1000" => VilleFrom200To1000,
+            "SRC-VDF-GT1000" => VilleMoreThan1000,
+            _ => VilleLessThan200
         };
 
     private static IReadOnlyList<OfficialResource> SmartResourcesFor(ActionRequirement action) =>

@@ -10,23 +10,23 @@ public sealed class OfficialResourceCatalogTests
     private readonly EventRulesEvaluator _evaluator = new(new FixedTimeProvider(new DateTimeOffset(2026, 8, 14, 12, 0, 0, TimeSpan.Zero)));
 
     [Fact]
-    public void Police_locale_action_resolves_to_ville_form_without_changing_rule_output()
+    public void Police_locale_action_resolves_to_stable_ville_page_without_changing_rule_output()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 150));
         var action = Assert.Single(result.Actions, action => action.Id == "ACT-POLICE-LOCALE");
 
         var resource = Assert.Single(OfficialResourceCatalog.For(action));
 
-        Assert.Equal("Remplir le formulaire Police locale", resource.Label);
-        Assert.Equal("https://www.ville-fribourg.ch/form/po-manifestation", resource.Url.ToString());
-        Assert.Equal(OfficialResourceType.OnlineApplication, resource.Type);
+        Assert.Equal("Ouvrir la page officielle Ville", resource.Label);
+        Assert.Equal("https://www.ville-fribourg.ch/organiser-manifestation/moins-de-200", resource.Url.ToString());
+        Assert.Equal(OfficialResourceType.OfficialInformation, resource.Type);
         Assert.Equal("Autorisation Police locale", action.Title);
     }
 
     [Theory]
-    [InlineData(150, "DL-SMART-20", "Ouvrir Smart Check", "https://www.smartevent.info/fr/user/login?destination=/fr/form/preavis-fribourg-200")]
-    [InlineData(500, "DL-SMART-30", "Ouvrir Smart Check Plus", "https://www.smartevent.info/fr/user/login?destination=/fr/form/preavis-fribourg")]
-    [InlineData(1200, "DL-SMART-60", "Ouvrir Smart Event Plus", "https://www.smartevent.info/fr/user/login?destination=/fr/form/request-plus")]
+    [InlineData(150, "DL-SMART-20", "Ouvrir la page Ville avec le lien Smart Check", "https://www.ville-fribourg.ch/organiser-manifestation/moins-de-200")]
+    [InlineData(500, "DL-SMART-30", "Ouvrir la page Ville avec le lien Smart Check Plus", "https://www.ville-fribourg.ch/organiser-manifestation/200-a-1000")]
+    [InlineData(1200, "DL-SMART-60", "Ouvrir la page Ville avec le lien Smart Event Plus", "https://www.ville-fribourg.ch/organiser-manifestation/plus-de-1000")]
     public void Smart_action_uses_existing_deadline_id_to_select_resource(int expectedAttendance, string deadlineId, string label, string url)
     {
         var result = Evaluate(DefaultProfile(expectedAttendance) with
