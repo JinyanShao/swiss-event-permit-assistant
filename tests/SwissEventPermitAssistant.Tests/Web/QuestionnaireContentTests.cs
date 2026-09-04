@@ -80,6 +80,22 @@ public sealed class QuestionnaireContentTests
     }
 
     [Fact]
+    public void Questionnaire_radio_answers_are_not_preselected_after_navigation()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.DoesNotContain(" checked", content);
+        Assert.Contains("isPublicEvent: text(\"isPublicEvent\") || \"Unknown\"", script);
+        Assert.Contains("hasAmplifiedMusicOrSound: text(\"hasAmplifiedMusicOrSound\") || \"Unknown\"", script);
+        Assert.Contains("hasTemporaryInstallations: text(\"hasTemporaryInstallations\") || \"Unknown\"", script);
+        Assert.Contains("affectsTrafficOrParking: text(\"affectsTrafficOrParking\") || \"Unknown\"", script);
+        Assert.Contains("hasProcessionOrRoute: text(\"hasProcessionOrRoute\") || \"Unknown\"", script);
+        Assert.Contains("isSportCompetitionOnPublicRoad: text(\"isSportCompetitionOnPublicRoad\") || \"Unknown\"", script);
+        Assert.Contains("usesGasGrillOrHeater: text(\"usesGasGrillOrHeater\") || \"Unknown\"", script);
+    }
+
+    [Fact]
     public void Client_validation_surfaces_all_required_radio_errors_and_focuses_first_invalid_field()
     {
         var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));

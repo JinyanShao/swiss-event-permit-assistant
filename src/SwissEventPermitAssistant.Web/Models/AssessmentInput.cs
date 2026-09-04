@@ -17,7 +17,7 @@ public sealed class AssessmentInput
 
     public VenueKind VenueKind { get; set; } = VenueKind.NotSure;
 
-    public YesNoUnknown IsPublicEvent { get; set; } = YesNoUnknown.Yes;
+    public YesNoUnknown IsPublicEvent { get; set; } = YesNoUnknown.Unknown;
 
     public BeverageMode BeverageMode { get; set; } = BeverageMode.NotSure;
 
@@ -25,23 +25,23 @@ public sealed class AssessmentInput
 
     public AlcoholMode AlcoholMode { get; set; } = AlcoholMode.NotSure;
 
-    public YesNoUnknown HasAmplifiedMusicOrSound { get; set; } = YesNoUnknown.No;
+    public YesNoUnknown HasAmplifiedMusicOrSound { get; set; } = YesNoUnknown.Unknown;
 
     public TimeOnly? EventEndTime { get; set; }
 
-    public YesNoUnknown HasTemporaryInstallations { get; set; } = YesNoUnknown.No;
+    public YesNoUnknown HasTemporaryInstallations { get; set; } = YesNoUnknown.Unknown;
 
-    public YesNoUnknown AffectsTrafficOrParking { get; set; } = YesNoUnknown.No;
+    public YesNoUnknown AffectsTrafficOrParking { get; set; } = YesNoUnknown.Unknown;
 
-    public YesNoUnknown HasProcessionOrRoute { get; set; } = YesNoUnknown.No;
+    public YesNoUnknown HasProcessionOrRoute { get; set; } = YesNoUnknown.Unknown;
 
-    public YesNoUnknown IsSportCompetitionOnPublicRoad { get; set; } = YesNoUnknown.No;
+    public YesNoUnknown IsSportCompetitionOnPublicRoad { get; set; } = YesNoUnknown.Unknown;
 
     public bool NeedsMunicipalMaterialOrDecorations { get; set; }
 
     public bool NeedsAdvertisingBannerOrPublicPosting { get; set; }
 
-    public YesNoUnknown UsesGasGrillOrHeater { get; set; } = YesNoUnknown.No;
+    public YesNoUnknown UsesGasGrillOrHeater { get; set; } = YesNoUnknown.Unknown;
 
     public YesNoUnknown HasLiabilityInsurance { get; set; } = YesNoUnknown.Unknown;
 

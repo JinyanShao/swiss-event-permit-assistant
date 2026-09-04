@@ -72,12 +72,13 @@
                 <label class="choice"><input type="radio" name="venueKind" value="NotSure" /> Je ne sais pas</label>
                 <span id="venueKind-error" class="field-error" role="alert">Sélectionnez une réponse.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">La manifestation est-elle ouverte au public ?</p>
-                <p class="field-help">Cette réponse concerne l’accès à l’événement, pas le statut public ou privé du lieu.</p>
-                <label class="choice"><input type="radio" name="isPublicEvent" value="Yes" checked /> Oui</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="isPublicEvent-label" aria-describedby="isPublicEvent-help isPublicEvent-error">
+                <p id="isPublicEvent-label" class="question-label">La manifestation est-elle ouverte au public ?</p>
+                <p id="isPublicEvent-help" class="field-help">Cette réponse concerne l’accès à l’événement, pas le statut public ou privé du lieu.</p>
+                <label class="choice"><input type="radio" name="isPublicEvent" value="Yes" required /> Oui</label>
                 <label class="choice"><input type="radio" name="isPublicEvent" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="isPublicEvent" value="Unknown" /> Je ne sais pas</label>
+                <span id="isPublicEvent-error" class="field-error" role="alert">Sélectionnez une réponse pour l’accès à la manifestation.</span>
             </div>
         </fieldset>
     </section>
@@ -117,24 +118,27 @@
     <section class="question-step" data-step="4" data-title="Musique et installations" tabindex="-1">
         <fieldset>
             <legend>Musique et installations</legend>
-            <div class="field-group">
-                <p class="question-label">Y aura-t-il de la musique amplifiée ou une sonorisation ?</p>
-                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="No" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="hasAmplifiedMusicOrSound-label" aria-describedby="hasAmplifiedMusicOrSound-error">
+                <p id="hasAmplifiedMusicOrSound-label" class="question-label">Y aura-t-il de la musique amplifiée ou une sonorisation ?</p>
+                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Yes" required /> Oui</label>
+                <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="hasAmplifiedMusicOrSound" value="Unknown" /> Je ne sais pas</label>
+                <span id="hasAmplifiedMusicOrSound-error" class="field-error" role="alert">Sélectionnez une réponse pour la musique ou la sonorisation.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">Y aura-t-il des installations temporaires ?</p>
-                <p class="field-help">Par exemple tente, scène, bar, cuisine, WC, gradins.</p>
-                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="No" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="hasTemporaryInstallations-label" aria-describedby="hasTemporaryInstallations-help hasTemporaryInstallations-error">
+                <p id="hasTemporaryInstallations-label" class="question-label">Y aura-t-il des installations temporaires ?</p>
+                <p id="hasTemporaryInstallations-help" class="field-help">Par exemple tente, scène, bar, cuisine, WC, gradins.</p>
+                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="Yes" required /> Oui</label>
+                <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="hasTemporaryInstallations" value="Unknown" /> Je ne sais pas</label>
+                <span id="hasTemporaryInstallations-error" class="field-error" role="alert">Sélectionnez une réponse pour les installations temporaires.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">Utiliserez-vous un gril ou chauffage à gaz ?</p>
-                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="No" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="usesGasGrillOrHeater-label" aria-describedby="usesGasGrillOrHeater-error">
+                <p id="usesGasGrillOrHeater-label" class="question-label">Utiliserez-vous un gril ou chauffage à gaz ?</p>
+                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="Yes" required /> Oui</label>
+                <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="usesGasGrillOrHeater" value="Unknown" /> Je ne sais pas</label>
+                <span id="usesGasGrillOrHeater-error" class="field-error" role="alert">Sélectionnez une réponse pour le gaz.</span>
             </div>
         </fieldset>
     </section>
@@ -142,23 +146,26 @@
     <section class="question-step" data-step="5" data-title="Circulation" tabindex="-1">
         <fieldset>
             <legend>Circulation</legend>
-            <div class="field-group">
-                <p class="question-label">La manifestation aura-t-elle un impact sur la circulation ou le stationnement ?</p>
-                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="No" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="affectsTrafficOrParking-label" aria-describedby="affectsTrafficOrParking-error">
+                <p id="affectsTrafficOrParking-label" class="question-label">La manifestation aura-t-elle un impact sur la circulation ou le stationnement ?</p>
+                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="Yes" required /> Oui</label>
+                <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="affectsTrafficOrParking" value="Unknown" /> Je ne sais pas</label>
+                <span id="affectsTrafficOrParking-error" class="field-error" role="alert">Sélectionnez une réponse pour la circulation ou le stationnement.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">Y aura-t-il un cortège, un parcours ou une occupation de route ?</p>
-                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="No" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="hasProcessionOrRoute-label" aria-describedby="hasProcessionOrRoute-error">
+                <p id="hasProcessionOrRoute-label" class="question-label">Y aura-t-il un cortège, un parcours ou une occupation de route ?</p>
+                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="Yes" required /> Oui</label>
+                <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="hasProcessionOrRoute" value="Unknown" /> Je ne sais pas</label>
+                <span id="hasProcessionOrRoute-error" class="field-error" role="alert">Sélectionnez une réponse pour le cortège, le parcours ou l’occupation de route.</span>
             </div>
-            <div class="field-group">
-                <p class="question-label">S’agit-il d’une compétition sportive sur la voie publique ?</p>
-                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="Yes" /> Oui</label>
-                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="No" checked /> Non</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="isSportCompetitionOnPublicRoad-label" aria-describedby="isSportCompetitionOnPublicRoad-error">
+                <p id="isSportCompetitionOnPublicRoad-label" class="question-label">S’agit-il d’une compétition sportive sur la voie publique ?</p>
+                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="Yes" required /> Oui</label>
+                <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="isSportCompetitionOnPublicRoad" value="Unknown" /> Je ne sais pas</label>
+                <span id="isSportCompetitionOnPublicRoad-error" class="field-error" role="alert">Sélectionnez une réponse pour la compétition sportive.</span>
             </div>
         </fieldset>
     </section>
@@ -166,12 +173,13 @@
     <section class="question-step" data-step="6" data-title="Vérification" tabindex="-1">
         <fieldset>
             <legend>Vérification</legend>
-            <div class="field-group">
-                <p class="question-label">Avez-vous une assurance responsabilité civile valable ?</p>
-                <p class="field-help">La Ville indique que l’organisateur doit pouvoir présenter une RC valable.</p>
-                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Yes" /> Oui</label>
+            <div class="field-group" role="radiogroup" aria-labelledby="hasLiabilityInsurance-label" aria-describedby="hasLiabilityInsurance-help hasLiabilityInsurance-error">
+                <p id="hasLiabilityInsurance-label" class="question-label">Avez-vous une assurance responsabilité civile valable ?</p>
+                <p id="hasLiabilityInsurance-help" class="field-help">La Ville indique que l’organisateur doit pouvoir présenter une RC valable.</p>
+                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Yes" required /> Oui</label>
                 <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="No" /> Non</label>
-                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Unknown" checked /> Je ne sais pas</label>
+                <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Unknown" /> Je ne sais pas</label>
+                <span id="hasLiabilityInsurance-error" class="field-error" role="alert">Sélectionnez une réponse pour l’assurance responsabilité civile.</span>
             </div>
             <div class="field-group">
                 <p class="question-label">Matériel ou décorations communales</p>
