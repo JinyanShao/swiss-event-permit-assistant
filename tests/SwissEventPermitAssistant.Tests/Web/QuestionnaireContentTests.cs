@@ -53,6 +53,15 @@ public sealed class QuestionnaireContentTests
     }
 
     [Fact]
+    public void Empty_information_results_do_not_render_a_blank_information_section()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Results.cshtml"));
+
+        Assert.Contains("@if (result.Information.Count > 0)", content);
+        Assert.Contains("<h2>Informations utiles</h2>", content);
+    }
+
+    [Fact]
     public void Expected_attendance_is_required_as_an_estimate()
     {
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));

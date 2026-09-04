@@ -119,21 +119,24 @@ else
                 }
             </section>
 
-            <section class="result-section">
-                <h2>Informations utiles</h2>
-                @foreach (var info in result.Information)
-                {
-                    <article class="ruled-item compact">
-                        <div class="item-marker">i</div>
-                        <div>
-                            <h3>@info.Title</h3>
-                            <p>@info.Text</p>
-                            @ResourceLinks(OfficialResourceCatalog.For(info))
-                            @SourceDisclosure(info.SourceId)
-                        </div>
-                    </article>
-                }
-            </section>
+            @if (result.Information.Count > 0)
+            {
+                <section class="result-section">
+                    <h2>Informations utiles</h2>
+                    @foreach (var info in result.Information)
+                    {
+                        <article class="ruled-item compact">
+                            <div class="item-marker">i</div>
+                            <div>
+                                <h3>@info.Title</h3>
+                                <p>@info.Text</p>
+                                @ResourceLinks(OfficialResourceCatalog.For(info))
+                                @SourceDisclosure(info.SourceId)
+                            </div>
+                        </article>
+                    }
+                </section>
+            }
 
             <section class="result-section confirmation-section">
                 <h2>À confirmer</h2>

@@ -122,7 +122,21 @@ public sealed class OfficialResourceCatalogTests
             Commune.VilleDeFribourg,
             new DateOnly(2026, 10, 10),
             expectedAttendance,
-            VenueKind.PublicSpace);
+            VenueKind.PublicSpace,
+            YesNoUnknown.Yes,
+            BeverageMode.NoBeverages,
+            FoodMode.NoFood,
+            AlcoholMode.NoAlcohol,
+            YesNoUnknown.No,
+            null,
+            YesNoUnknown.No,
+            YesNoUnknown.No,
+            YesNoUnknown.No,
+            YesNoUnknown.No,
+            false,
+            false,
+            YesNoUnknown.No,
+            YesNoUnknown.Yes);
 
     private sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
     {

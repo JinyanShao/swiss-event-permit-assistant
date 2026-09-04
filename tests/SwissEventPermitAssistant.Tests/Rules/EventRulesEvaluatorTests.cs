@@ -9,6 +9,22 @@ public sealed class EventRulesEvaluatorTests
     private readonly EventRulesEvaluator _evaluator = new(new FixedTimeProvider(new DateTimeOffset(2026, 8, 14, 12, 0, 0, TimeSpan.Zero)));
 
     [Fact]
+    public void Event_profile_defaults_are_conservative_for_unanswered_fields()
+    {
+        var profile = new EventProfile(
+            Commune.VilleDeFribourg,
+            new DateOnly(2026, 10, 10),
+            ExpectedAttendance: 150,
+            VenueKind.PublicSpace);
+
+        Assert.Equal(YesNoUnknown.Unknown, profile.IsPublicEvent);
+        Assert.Equal(BeverageMode.NotSure, profile.BeverageMode);
+        Assert.Equal(FoodMode.NotSure, profile.FoodMode);
+        Assert.Equal(AlcoholMode.NotSure, profile.AlcoholMode);
+        Assert.Equal(YesNoUnknown.Unknown, profile.HasLiabilityInsurance);
+    }
+
+    [Fact]
     public void Small_public_event_without_food_or_drinks_requires_police_only_with_20_day_deadline()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 150));
@@ -458,7 +474,21 @@ public sealed class EventRulesEvaluatorTests
             Commune.VilleDeFribourg,
             eventDate ?? new DateOnly(2026, 10, 10),
             expectedAttendance,
-            VenueKind.PublicSpace);
+            VenueKind.PublicSpace,
+            YesNoUnknown.Yes,
+            BeverageMode.NoBeverages,
+            FoodMode.NoFood,
+            AlcoholMode.NoAlcohol,
+            YesNoUnknown.No,
+            null,
+            YesNoUnknown.No,
+            YesNoUnknown.No,
+            YesNoUnknown.No,
+            YesNoUnknown.No,
+            false,
+            false,
+            YesNoUnknown.No,
+            YesNoUnknown.Yes);
 
     private static void AssertAction(AssessmentResult result, string id) =>
         Assert.Contains(result.Actions, action => action.Id == id);
