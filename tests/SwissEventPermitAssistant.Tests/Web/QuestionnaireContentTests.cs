@@ -96,6 +96,22 @@ public sealed class QuestionnaireContentTests
     }
 
     [Fact]
+    public void Required_questions_show_visible_asterisk_marker()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
+
+        Assert.Contains("La manifestation aura-t-elle lieu sur le territoire de la Ville de Fribourg ? *</p>", content);
+        Assert.Contains("Date de la manifestation *</span>", content);
+        Assert.Contains("Nombre de personnes attendues *</span>", content);
+        Assert.Contains("Où la manifestation aura-t-elle lieu ? *</p>", content);
+        Assert.Contains("La manifestation est-elle ouverte au public ? *</p>", content);
+        Assert.Contains("Qu’en est-il des boissons ? *</p>", content);
+        Assert.Contains("Qu’en est-il de la nourriture ? *</p>", content);
+        Assert.Contains("Y aura-t-il des boissons alcoolisées ? *</p>", content);
+        Assert.Contains("Avez-vous une assurance responsabilité civile valable ? *</p>", content);
+    }
+
+    [Fact]
     public void Client_validation_surfaces_all_required_radio_errors_and_focuses_first_invalid_field()
     {
         var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
