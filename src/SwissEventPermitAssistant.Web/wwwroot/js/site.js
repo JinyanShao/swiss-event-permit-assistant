@@ -82,6 +82,7 @@ if (form) {
     counter.textContent = `Étape ${currentStep + 1} sur ${steps.length}`;
     title.textContent = steps[currentStep].dataset.title;
     progress.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+    previous.hidden = currentStep === 0;
     previous.disabled = currentStep === 0;
     next.hidden = currentStep === steps.length - 1;
     submit.hidden = currentStep !== steps.length - 1;

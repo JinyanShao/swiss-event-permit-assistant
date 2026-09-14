@@ -149,6 +149,23 @@ public sealed class QuestionnaireContentTests
     }
 
     [Fact]
+    public void First_scope_step_hides_inactive_back_button()
+    {
+        var script = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/js/site.js"));
+
+        Assert.Contains("previous.hidden = currentStep === 0;", script);
+        Assert.Contains("previous.disabled = currentStep === 0;", script);
+    }
+
+    [Fact]
+    public void Sitemap_includes_public_assessment_entry()
+    {
+        var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/sitemap.xml"));
+
+        Assert.Contains("<loc>https://sepa-fribourg-jinyan.azurewebsites.net/Assessment</loc>", content);
+    }
+
+    [Fact]
     public void Venue_question_distinguishes_public_domain_from_private_venue_open_to_public()
     {
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
