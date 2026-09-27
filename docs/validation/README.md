@@ -17,4 +17,4 @@ Personal contact details, outreach lists, communication history, and internal fo
 
 ## Analytics
 
-No analytics or tracking is currently in use. The product previously used Plausible Analytics for a short aggregate-usage baseline; that account is no longer active and its historical numbers are no longer tracked here.
+No analytics, no tracking cookies.
