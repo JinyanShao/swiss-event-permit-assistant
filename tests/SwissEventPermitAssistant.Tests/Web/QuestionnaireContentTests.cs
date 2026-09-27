@@ -162,7 +162,7 @@ public sealed class QuestionnaireContentTests
     {
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/wwwroot/sitemap.xml"));
 
-        Assert.Contains("<loc>https://sepa-fribourg-jinyan.azurewebsites.net/Assessment</loc>", content);
+        Assert.Contains("<loc>https://sepa-jinyan.azurewebsites.net/Assessment</loc>", content);
     }
 
     [Fact]

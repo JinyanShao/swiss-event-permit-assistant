@@ -3,7 +3,7 @@
 [![CI](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/JinyanShao/swiss-event-permit-assistant)](https://github.com/JinyanShao/swiss-event-permit-assistant/releases/latest)
 
-**[Live demo](https://sepa-fribourg-jinyan.azurewebsites.net)** · [License: MIT](LICENSE)
+**[Live demo](https://sepa-jinyan.azurewebsites.net)** · [License: MIT](LICENSE)
 
 V0.1 pilot for preparing temporary event permit dossiers for the Ville de Fribourg.
 

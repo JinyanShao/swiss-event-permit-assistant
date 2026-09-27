@@ -35,7 +35,7 @@ dotnet publish src/SwissEventPermitAssistant.Web/SwissEventPermitAssistant.Web.c
 ## Production Health Check
 
 ```bash
-curl -i https://sepa-fribourg-jinyan.azurewebsites.net/healthz
+curl -i https://sepa-jinyan.azurewebsites.net/healthz
 ```
 
 The endpoint should return a successful response. The application is deployed over HTTPS and does not store permit dossiers on the server.

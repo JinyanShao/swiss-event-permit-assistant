@@ -7,7 +7,7 @@
 - Tester identity: anonymous
 - Language of feedback: French
 - Feedback date: 2026-08-23
-- Product URL: https://sepa-fribourg-jinyan.azurewebsites.net
+- Product URL: https://sepa-jinyan.azurewebsites.net
 
 This note records real user feedback without storing personal data.
 

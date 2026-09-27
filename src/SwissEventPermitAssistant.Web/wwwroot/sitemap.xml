@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://sepa-fribourg-jinyan.azurewebsites.net/</loc>
+    <loc>https://sepa-jinyan.azurewebsites.net/</loc>
   </url>
   <url>
-    <loc>https://sepa-fribourg-jinyan.azurewebsites.net/Assessment</loc>
+    <loc>https://sepa-jinyan.azurewebsites.net/Assessment</loc>
   </url>
   <url>
-    <loc>https://sepa-fribourg-jinyan.azurewebsites.net/Privacy</loc>
+    <loc>https://sepa-jinyan.azurewebsites.net/Privacy</loc>
   </url>
 </urlset>

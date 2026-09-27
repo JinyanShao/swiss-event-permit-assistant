@@ -8,14 +8,14 @@ Do not store passwords, tokens, Azure publish profiles, GitHub credentials, or M
 
 | | |
 | --- | --- |
-| URL | https://sepa-fribourg-jinyan.azurewebsites.net |
-| Health endpoint | https://sepa-fribourg-jinyan.azurewebsites.net/healthz |
+| URL | https://sepa-jinyan.azurewebsites.net |
+| Health endpoint | https://sepa-jinyan.azurewebsites.net/healthz |
 | Host | Azure App Service |
-| Resource group | `rg-swiss-event-permit-assistant-neu` |
-| App Service Plan | `asp-sepa-f1-fr` |
-| Web App name | `sepa-fribourg-jinyan` |
-| Region | France Central |
-| SKU | Free |
+| Resource group | `rg-sepa` |
+| App Service Plan | `asp-sepa-free` |
+| Web App name | `sepa-jinyan` |
+| Region | Italy North |
+| SKU | Free (F1, Linux) |
 | Runtime | .NET 10 |
 | HTTPS-only | enabled |
 
@@ -29,6 +29,7 @@ ASPNETCORE_ENVIRONMENT=Production
 
 - Azure CLI installed and logged in (`az login`)
 - Access to the Azure subscription that owns the App Service resources above
+- Subscription: Azure for Students (HES-SO account). Azure Cloud Shell can be used instead of a local Azure CLI.
 - No secrets committed to the repo
 
 ## Release Steps
@@ -53,8 +54,8 @@ Deploy to the existing App Service:
 
 ```bash
 az webapp deploy \
-  --resource-group rg-swiss-event-permit-assistant-neu \
-  --name sepa-fribourg-jinyan \
+  --resource-group rg-sepa \
+  --name sepa-jinyan \
   --src-path /tmp/sepa-azure-main.zip \
   --type zip \
   --async false
@@ -66,19 +67,19 @@ Confirm app settings and runtime:
 
 ```bash
 az webapp config appsettings list \
-  --resource-group rg-swiss-event-permit-assistant-neu \
-  --name sepa-fribourg-jinyan
+  --resource-group rg-sepa \
+  --name sepa-jinyan
 
 az webapp config show \
-  --resource-group rg-swiss-event-permit-assistant-neu \
-  --name sepa-fribourg-jinyan
+  --resource-group rg-sepa \
+  --name sepa-jinyan
 ```
 
 Smoke test:
 
 ```bash
-curl -i https://sepa-fribourg-jinyan.azurewebsites.net/
-curl -i https://sepa-fribourg-jinyan.azurewebsites.net/healthz
+curl -i https://sepa-jinyan.azurewebsites.net/
+curl -i https://sepa-jinyan.azurewebsites.net/healthz
 ```
 
 ## If the Production URL Changes
@@ -87,5 +88,5 @@ Update the GitHub repository homepage to match:
 
 ```bash
 gh repo edit JinyanShao/swiss-event-permit-assistant \
-  --homepage https://sepa-fribourg-jinyan.azurewebsites.net
+  --homepage https://sepa-jinyan.azurewebsites.net
 ```
