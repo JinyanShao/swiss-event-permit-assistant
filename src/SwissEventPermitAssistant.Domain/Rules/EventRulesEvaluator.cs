@@ -279,9 +279,6 @@ public sealed class EventRulesEvaluator
         return new Deadline(id, label, date, $"Au moins {months} mois avant la manifestation.", DeadlineStatusFor(date), sourceId);
     }
 
-    private static Deadline CreateUnconfirmed(string id, string label, string sourceId) =>
-        new(id, label, null, "Délai minimum non confirmé dans la source publique consultée.", DeadlineStatus.Unconfirmed, sourceId);
-
     private DeadlineStatus DeadlineStatusFor(DateOnly date)
     {
         var today = DateOnly.FromDateTime(_timeProvider.GetLocalNow().DateTime);

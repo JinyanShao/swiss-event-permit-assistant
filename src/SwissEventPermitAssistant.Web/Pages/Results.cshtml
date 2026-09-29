@@ -1,4 +1,5 @@
 @page
+@using System.Globalization
 @using Microsoft.AspNetCore.Html
 @using System.Net
 @using SwissEventPermitAssistant.Domain.Profiles
@@ -9,6 +10,10 @@
     ViewData["Title"] = "Résultat";
     var result = Model.Result;
     var input = Model.Input;
+    var earliestSourcesCheckedDate = OfficialSources.All.Values
+        .Select(source => source.CheckedDate)
+        .Append(OfficialResourceCatalog.LastCheckedDate)
+        .Min();
 }
 
 @if (!ViewData.ModelState.IsValid || result is null || input is null)
@@ -161,7 +166,7 @@ else
 
         <aside class="result-rail">
             <h2>Sources officielles</h2>
-            <p>Informations vérifiées le 23 août 2026 à partir de sources officielles publiques.</p>
+            <p>Informations vérifiées le @FormatFrenchDate(earliestSourcesCheckedDate) à partir de sources officielles publiques.</p>
             @foreach (var source in result.Sources)
             {
                 <details class="source-detail">
@@ -177,7 +182,11 @@ else
 }
 
 @functions {
+    private static readonly CultureInfo FrenchDateCulture = new("fr-CH");
+
     private static string FormatDate(DateOnly? date) => date?.ToString("dd.MM.yyyy") ?? "À confirmer";
+
+    private static string FormatFrenchDate(DateOnly date) => date.ToString("d MMMM yyyy", FrenchDateCulture);
 
     private static string StatusText(RequirementStatus status) => status switch
     {

@@ -9,6 +9,14 @@ V0.1 pilot for preparing temporary event permit dossiers for the Ville de Fribou
 
 This project is an independent tool. It is not an official service of the Ville de Fribourg or the Canton de Fribourg. It helps users organize publicly available official requirements, deadlines, source links, and points that must be confirmed with the competent authority.
 
+## Project status
+
+V0.1 is complete and maintained as a portfolio project. Official sources are re-checked every quarter (last check: 2026-09-04). Validated with two rounds of external feedback, including Bénévolat Fribourg Freiburg (see docs/user-testing). Feature development is paused; possible next steps are listed below but not in progress.
+
+- Confirm with the Préfecture when an existing restaurant, bar, hotel, or concert-hall patente already covers an event, to avoid over-requiring Patente K.
+- Clarify the operational Police locale process for a public event held on private land.
+- Confirm whether it matters who sells or serves food or drinks (the venue vs. the organiser) for Patente K applicability.
+
 ## Current Scope
 
 - Canton de Fribourg
@@ -98,6 +106,7 @@ GitHub Actions runs restore, build, test, and publish checks on every push and p
 - [docs/deployment.md](docs/deployment.md) — production deployment and release procedures
 - [docs/operations.md](docs/operations.md) — local development, testing, health checks, and maintenance
 - [docs/sources/README.md](docs/sources/README.md) — official source inventory and freshness policy
+- [docs/decisions.md](docs/decisions.md) — architecture decision log
 
 ## Disclaimer And Source Freshness
 

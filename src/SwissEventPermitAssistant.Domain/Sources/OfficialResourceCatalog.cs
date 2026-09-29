@@ -20,6 +20,8 @@ public static class OfficialResourceCatalog
 {
     private static readonly DateOnly ResourceCheckedDate = new(2026, 9, 4);
 
+    public static DateOnly LastCheckedDate => ResourceCheckedDate;
+
     private static readonly OfficialResource VilleLessThan200 = new(
         "Ouvrir la page officielle Ville",
         new Uri("https://www.ville-fribourg.ch/organiser-manifestation/moins-de-200"),
