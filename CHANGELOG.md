@@ -2,7 +2,7 @@
 
 All notable changes to Swiss Event Permit Assistant are documented in this file.
 
-## [Unreleased]
+## [v0.1.5] - 2026-09-29
 
 - Fixed stale commit references in `docs/user-testing/round-1.md` (the original hashes predated a history rewrite and no longer resolve on `main`).
 - Removed the "Liens de campagne" (UTM) section from the privacy page; the site no longer generates or reads UTM parameters.
