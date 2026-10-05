@@ -1,0 +1,41 @@
+name: Keep the demo warm
+
+# The demo runs on an Azure free tier, which puts the app to sleep after about
+# 20 minutes of no traffic. The first visitor after that waits through a cold
+# start. This pings the app often enough that a visitor rarely does.
+#
+# It doubles as a liveness check: if the app answers with an error, or does not
+# answer at all, this job fails and GitHub emails the repository owner.
+
+on:
+  schedule:
+    # every 10 minutes, offset off the hour — GitHub delays jobs scheduled on
+    # round times when the shared runners are busy
+    - cron: "3,13,23,33,43,53 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keep-warm
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping the live demo
+        run: |
+          URL="https://sepa-jinyan.azurewebsites.net/"
+          for attempt in 1 2 3; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 90 "$URL" || echo 000)
+            echo "attempt $attempt → HTTP $code"
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::error::$URL did not return 200 after 3 attempts (last: $code)"
+          exit 1
