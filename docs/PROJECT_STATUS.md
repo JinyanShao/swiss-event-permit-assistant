@@ -42,6 +42,7 @@
 - 90 天新鲜度政策下，下次复核不晚于 **2027-01-15**。
 - 作品详情页仍显示 **2026-08-14**，需要和仓库/应用的 **2026-10-17** 对齐。
 - 待确认问题现包括：多日活动每天人数不同如何分档；Durabilité Directive 无食品/饮料活动的适用范围和小型活动餐具豁免；免费食品/饮品及场地经营者现有牌照下 Patente K 的适用方式；Formulaire A/B 的触发标准；材料和 RC 是否对所有规模必需；私人场地公共活动的 Police locale 流程；OCN 对竞赛性质和跨市镇路线的权限边界；工作日截止日期如何处理当地公假。
+- 对上述问题的分机关咨询清单与联系方式见[主管机关确认跟进](sources/authority-clarifications-2026-10-17.md)。Police locale 邮件的 Outlook 发送状态尚未核实；Smart Event、Préfecture de la Sarine 和 OCN 的询问尚未确认发送，因此不能把它们记作已联系或已获答复。
 
 来源与新鲜度规则见 [docs/sources/README.md](sources/README.md)。
 
@@ -64,7 +65,7 @@
 
 ### 先处理：可信度与运行可靠性
 
-1. 向 Ville de Fribourg（Police locale / mobilité、Smart Event）和相关 Prefecture/OCN 逐项确认来源复核报告列出的适用范围问题，再据答复决定是否调整规则或继续显示“待确认”。
+1. 按[主管机关确认跟进](sources/authority-clarifications-2026-10-17.md)先核实 Police locale 邮件是否已发送，再向 Ville de Fribourg（Smart Event）、Préfecture de la Sarine 和 OCN 发送问题；收到书面答复后逐项决定是否调整规则或继续显示“待确认”。
 2. 调查保活计划为何实际运行远少于配置频率，并确认失败通知有效。若继续使用免费层，就把冷启动作为已知体验边界；若演示必须稳定快速，再评估支持常驻实例的托管方案及成本。
 3. Deadline 状态目前依赖服务器本地时区；决策记录指出 Azure Linux 使用 UTC，在苏黎世午夜附近可能偏一天。应显式按 `Europe/Zurich` 计算，并覆盖日期边界。Police locale 期限还须按工作日处理（含公假规则）；目前只显示最低工作日提前量，没有计算截止日。
 
