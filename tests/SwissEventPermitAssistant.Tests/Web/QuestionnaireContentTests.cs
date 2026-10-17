@@ -66,7 +66,7 @@ public sealed class QuestionnaireContentTests
     {
         var content = File.ReadAllText(ProjectFile("src/SwissEventPermitAssistant.Web/Pages/Assessment.cshtml"));
 
-        Assert.Contains("Une estimation suffit pour orienter les démarches et les délais applicables.", content);
+        Assert.Contains("Indiquez le nombre attendu chaque jour. La Ville utilise ce chiffre pour orienter la catégorie et le délai.", content);
         Assert.Contains("name=\"expectedAttendance\" type=\"number\" min=\"1\" inputmode=\"numeric\" required", content);
         Assert.Contains("Indiquez une estimation du nombre de personnes attendues.", content);
     }
@@ -128,7 +128,7 @@ public sealed class QuestionnaireContentTests
 
         Assert.Contains("La manifestation aura-t-elle lieu sur le territoire de la Ville de Fribourg ? *</p>", content);
         Assert.Contains("Date de la manifestation *</span>", content);
-        Assert.Contains("Nombre de personnes attendues *</span>", content);
+        Assert.Contains("Nombre de personnes attendues par jour *</span>", content);
         Assert.Contains("Où la manifestation aura-t-elle lieu ? *</p>", content);
         Assert.Contains("La manifestation est-elle ouverte au public ? *</p>", content);
         Assert.Contains("Qu’en est-il des boissons ? *</p>", content);

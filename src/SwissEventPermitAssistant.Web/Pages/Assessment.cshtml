@@ -53,8 +53,8 @@
                 <input name="eventEndTime" type="time" />
             </label>
             <label class="field">
-                <span>Nombre de personnes attendues *</span>
-                <span id="expectedAttendance-help" class="field-help">Une estimation suffit pour orienter les démarches et les délais applicables.</span>
+                <span>Nombre de personnes attendues par jour *</span>
+                <span id="expectedAttendance-help" class="field-help">Indiquez le nombre attendu chaque jour. La Ville utilise ce chiffre pour orienter la catégorie et le délai.</span>
                 <input name="expectedAttendance" type="number" min="1" inputmode="numeric" required aria-describedby="expectedAttendance-help expectedAttendance-error" />
                 <span id="expectedAttendance-error" class="field-error" role="alert">Indiquez une estimation du nombre de personnes attendues.</span>
             </label>
@@ -175,7 +175,7 @@
             <legend>Vérification</legend>
             <div class="field-group" role="radiogroup" aria-labelledby="hasLiabilityInsurance-label" aria-describedby="hasLiabilityInsurance-help hasLiabilityInsurance-error">
                 <p id="hasLiabilityInsurance-label" class="question-label">Avez-vous une assurance responsabilité civile valable ? *</p>
-                <p id="hasLiabilityInsurance-help" class="field-help">La Ville indique que l’organisateur doit pouvoir présenter une RC valable.</p>
+                <p id="hasLiabilityInsurance-help" class="field-help">Une RC peut être demandée selon le lieu et le type de manifestation. Confirmez ce point avec l’autorité compétente.</p>
                 <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Yes" required /> Oui</label>
                 <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="No" /> Non</label>
                 <label class="choice"><input type="radio" name="hasLiabilityInsurance" value="Unknown" /> Je ne sais pas</label>

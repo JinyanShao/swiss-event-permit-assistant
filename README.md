@@ -11,7 +11,7 @@ This project is an independent tool. It is not an official service of the Ville 
 
 ## Project status
 
-V0.1 is complete and maintained as a portfolio project. Official sources are re-checked every quarter (last check: 2026-09-04). Validated with two rounds of external feedback, including Bénévolat Fribourg Freiburg (see docs/user-testing). Feature development is paused; possible next steps are listed below but not in progress.
+V0.1 is complete and maintained as a portfolio project. Official sources are re-checked every quarter (last review: 2026-10-17). Validated with two rounds of external feedback, including Bénévolat Fribourg Freiburg (see docs/user-testing). Feature development is paused; possible next steps are listed below but not in progress.
 
 - Confirm with the Préfecture when an existing restaurant, bar, hotel, or concert-hall patente already covers an event, to avoid over-requiring Patente K.
 - Clarify the operational Police locale process for a public event held on private land.
@@ -112,7 +112,7 @@ GitHub Actions runs restore, build, test, and publish checks on every push and p
 
 Swiss Event Permit Assistant is not affiliated with the Ville de Fribourg, Canton de Fribourg, prefectures, Police locale, or OCN. It organizes public information for preparation only. Users must confirm final requirements, forms, fees, deadlines, and submission instructions with the competent authority.
 
-Rule sources were last reviewed on 2026-08-23. Source freshness policy and unresolved interpretations are recorded in `docs/sources/README.md`.
+Rule sources were last reviewed on 2026-10-17. Source freshness policy, the itemized review, and unresolved interpretations are recorded in `docs/sources/README.md`.
 
 ## Design Direction
 

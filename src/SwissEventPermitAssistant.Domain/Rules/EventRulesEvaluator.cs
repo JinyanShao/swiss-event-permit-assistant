@@ -58,11 +58,18 @@ public sealed class EventRulesEvaluator
             return;
         }
 
-        var (sourceId, deadline) = profile.ExpectedAttendance < 200
-            ? ("SRC-VDF-LT200", CreateDaysBefore("DL-POLICE-20", "Autorisation Police locale", profile.EventDate, 20, "SRC-VDF-LT200"))
+        var (sourceId, deadlineId, workingDays) = profile.ExpectedAttendance < 200
+            ? ("SRC-VDF-LT200", "DL-POLICE-20", 20)
             : profile.ExpectedAttendance <= 1000
-                ? ("SRC-VDF-200-1000", CreateDaysBefore("DL-POLICE-30", "Autorisation Police locale", profile.EventDate, 30, "SRC-VDF-200-1000"))
-                : ("SRC-VDF-GT1000", CreateDaysBefore("DL-POLICE-60", "Autorisation Police locale", profile.EventDate, 60, "SRC-VDF-GT1000"));
+                ? ("SRC-VDF-200-1000", "DL-POLICE-30", 30)
+                : ("SRC-VDF-GT1000", "DL-POLICE-60", 60);
+        var deadline = new Deadline(
+            deadlineId,
+            "Autorisation Police locale",
+            null,
+            $"Au moins {workingDays} jours ouvrables avant la manifestation. V0.1 ne calcule pas encore cette date.",
+            DeadlineStatus.Unconfirmed,
+            sourceId);
 
         Use(sourceIds, sourceId);
         deadlines.AddUnique(deadline);
@@ -169,8 +176,9 @@ public sealed class EventRulesEvaluator
     {
         if (profile.HasTemporaryInstallations == YesNoUnknown.Yes)
         {
-            documents.AddMerge(new DocumentRequirement("DOC-SITE-PLAN", "Plan du site", RequirementStatus.Required, "Nécessaire pour décrire les installations et les accès.", ["R-INSTALLATION-001"], "SRC-FR-FORM-B"));
-            documents.AddMerge(new DocumentRequirement("DOC-INSTALLATION-DESCRIPTION", "Description des installations temporaires", RequirementStatus.Required, "Tente, scène, bar, cuisine, WC ou installations similaires.", ["R-INSTALLATION-001"], "SRC-FR-FORM-B"));
+            documents.AddMerge(new DocumentRequirement("DOC-SITE-PLAN", "Plan du site", RequirementStatus.NeedsConfirmation, "Le formulaire Police locale indique un plan « si disponible »; le Formulaire B le demande si ce formulaire s'applique.", ["R-INSTALLATION-001"], "SRC-FR-FORM-B"));
+            documents.AddMerge(new DocumentRequirement("DOC-INSTALLATION-DESCRIPTION", "Description des installations temporaires", RequirementStatus.NeedsConfirmation, "Le Formulaire B demande une description si ce formulaire s'applique; confirmer les pièces requises pour cette manifestation.", ["R-INSTALLATION-001"], "SRC-FR-FORM-B"));
+            AddConfirmation(confirmations, "CONF-INSTALLATIONS", "Pièces pour installations temporaires", "Les exigences varient selon le dossier et l'applicabilité du Formulaire B.", "Confirmer auprès de la Police locale si un plan et une description sont exigés.", "Ville de Fribourg - Police locale", "SRC-FR-FORM-B", sourceIds);
             Use(sourceIds, "SRC-FR-FORM-B");
         }
         else if (profile.HasTemporaryInstallations == YesNoUnknown.Unknown)
@@ -200,8 +208,8 @@ public sealed class EventRulesEvaluator
     {
         if (profile.AffectsTrafficOrParking == YesNoUnknown.Yes)
         {
-            documents.AddMerge(new DocumentRequirement("DOC-SITE-PLAN", "Plan du site", RequirementStatus.Required, "Utile pour documenter les accès, la circulation et l’organisation du site.", ["R-TRAFFIC-001"], "SRC-FR-FORM-B"));
-            documents.AddMerge(new DocumentRequirement("DOC-TRAFFIC-PARKING", "Concept de circulation ou stationnement", RequirementStatus.Required, "Nécessaire si la manifestation influence la circulation ou le stationnement.", ["R-TRAFFIC-001"], "SRC-FR-FORM-B"));
+            documents.AddMerge(new DocumentRequirement("DOC-SITE-PLAN", "Plan du site", RequirementStatus.NeedsConfirmation, "La demande Police locale indique un plan « si disponible »; confirmer si ce dossier l'exige.", ["R-TRAFFIC-001"], "SRC-FR-FORM-B"));
+            documents.AddMerge(new DocumentRequirement("DOC-TRAFFIC-PARKING", "Concept de circulation ou stationnement", RequirementStatus.NeedsConfirmation, "La Ville peut exiger un concept selon la manifestation; les mesures exactes doivent être validées.", ["R-TRAFFIC-001"], "SRC-FR-FORM-B"));
             AddConfirmation(confirmations, "CONF-TRAFFIC", "Mesures de circulation", "Les mesures exactes doivent être validées par l’autorité compétente.", "Confirmer les besoins de signalisation, fermeture ou stationnement.", "Police cantonale / Police locale", "SRC-FR-FORM-B", sourceIds);
         }
         else if (profile.AffectsTrafficOrParking == YesNoUnknown.Unknown)
@@ -211,7 +219,7 @@ public sealed class EventRulesEvaluator
 
         if (profile.HasProcessionOrRoute == YesNoUnknown.Yes)
         {
-            documents.AddMerge(new DocumentRequirement("DOC-ROUTE-PLAN", "Plan du parcours", RequirementStatus.Required, "Nécessaire pour un cortège, parcours ou occupation de route.", ["R-ROUTE-001"], "SRC-FR-FORM-B"));
+            documents.AddMerge(new DocumentRequirement("DOC-ROUTE-PLAN", "Plan du parcours", RequirementStatus.NeedsConfirmation, "Le Formulaire B demande un plan si ce formulaire s'applique; confirmer les pièces requises pour cette manifestation.", ["R-ROUTE-001"], "SRC-FR-FORM-B"));
             AddConfirmation(confirmations, "CONF-ROAD-CLOSURE", "Fermeture ou restriction de route", "Une fermeture ou restriction peut nécessiter une validation spécifique.", "Confirmer avec l’autorité compétente.", "Police locale / Police cantonale", "SRC-FR-FORM-B", sourceIds);
         }
         else if (profile.HasProcessionOrRoute == YesNoUnknown.Unknown)
@@ -230,12 +238,11 @@ public sealed class EventRulesEvaluator
 
     private static void AddInsuranceRules(EventProfile profile, List<DocumentRequirement> documents, List<ConfirmationItem> confirmations, HashSet<string> sourceIds)
     {
-        documents.AddMerge(new DocumentRequirement("DOC-LIABILITY-INSURANCE", "Assurance responsabilité civile valable", RequirementStatus.Required, "La Ville indique que l’organisateur doit pouvoir présenter une RC valable.", ["R-RC-001"], SourceForAttendance(profile.ExpectedAttendance)));
-        Use(sourceIds, SourceForAttendance(profile.ExpectedAttendance));
+        documents.AddMerge(new DocumentRequirement("DOC-LIABILITY-INSURANCE", "Assurance responsabilité civile valable", RequirementStatus.NeedsConfirmation, "Les conditions et le formulaire Police locale actuels ne confirment pas une obligation générale; une RC peut être demandée selon l’événement.", ["R-RC-001"], "SRC-FR-FORM-B"));
 
         if (profile.HasLiabilityInsurance != YesNoUnknown.Yes)
         {
-            AddConfirmation(confirmations, "CONF-RC", "Assurance responsabilité civile", "L’assurance RC n’est pas confirmée dans vos réponses.", "Prévoir une RC valable ou vérifier ce point avant de déposer la demande.", "Ville de Fribourg", SourceForAttendance(profile.ExpectedAttendance), sourceIds);
+            AddConfirmation(confirmations, "CONF-RC", "Assurance responsabilité civile", "L’assurance RC n’est pas confirmée dans vos réponses.", "Prévoir une RC valable ou vérifier ce point avant de déposer la demande.", "Ville de Fribourg", "SRC-FR-FORM-B", sourceIds);
         }
     }
 

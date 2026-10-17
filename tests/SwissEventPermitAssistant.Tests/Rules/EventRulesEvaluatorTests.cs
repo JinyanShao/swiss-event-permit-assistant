@@ -25,13 +25,16 @@ public sealed class EventRulesEvaluatorTests
     }
 
     [Fact]
-    public void Small_public_event_without_food_or_drinks_requires_police_only_with_20_day_deadline()
+    public void Small_public_event_without_food_or_drinks_shows_20_working_day_lead_without_guessing_a_date()
     {
         var result = Evaluate(DefaultProfile(expectedAttendance: 150));
 
         AssertAction(result, "ACT-POLICE-LOCALE");
         AssertNoAction(result, "ACT-PATENTE-K");
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-20" && deadline.Date == new DateOnly(2026, 9, 20));
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-20"
+            && deadline.Date is null
+            && deadline.Status == DeadlineStatus.Unconfirmed
+            && deadline.Basis.Contains("20 jours ouvrables", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -70,8 +73,9 @@ public sealed class EventRulesEvaluatorTests
         });
 
         AssertAction(result, "ACT-PATENTE-K");
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-30" && deadline.Date == new DateOnly(2026, 9, 10));
-        Assert.DoesNotContain(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED");
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-30"
+            && deadline.Date is null
+            && deadline.Status == DeadlineStatus.Unconfirmed);
     }
 
     [Fact]
@@ -99,9 +103,10 @@ public sealed class EventRulesEvaluatorTests
         AssertAction(result, "ACT-PATENTE-K");
         Assert.Contains(result.Actions, action => action.Id == "ACT-SMART-CHECK" && action.Title == "Smart Event Plus");
         Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-SMART-60" && deadline.Date == new DateOnly(2026, 8, 11));
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-60" && deadline.Date == new DateOnly(2026, 8, 11));
+        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-60"
+            && deadline.Date is null
+            && deadline.Status == DeadlineStatus.Unconfirmed);
         AssertConfirmation(result, "CONF-FORM-B");
-        Assert.DoesNotContain(result.Deadlines, deadline => deadline.Id == "DL-POLICE-UNCONFIRMED");
     }
 
     [Fact]
@@ -228,6 +233,7 @@ public sealed class EventRulesEvaluatorTests
         });
 
         var document = Assert.Single(result.Documents, item => item.Id == "DOC-LIABILITY-INSURANCE");
+        Assert.Equal(RequirementStatus.NeedsConfirmation, document.Status);
         Assert.DoesNotContain("upload", document.Reason, StringComparison.OrdinalIgnoreCase);
         AssertConfirmation(result, "CONF-RC");
     }
@@ -256,13 +262,16 @@ public sealed class EventRulesEvaluatorTests
     }
 
     [Fact]
-    public void Deadline_status_uses_injected_clock()
+    public void Smart_deadline_status_uses_injected_clock()
     {
         var evaluator = new EventRulesEvaluator(new FixedTimeProvider(new DateTimeOffset(2026, 9, 10, 12, 0, 0, TimeSpan.Zero)));
 
-        var result = evaluator.Evaluate(DefaultProfile(expectedAttendance: 150, eventDate: new DateOnly(2026, 10, 10)));
+        var resultWithDrinks = evaluator.Evaluate(DefaultProfile(expectedAttendance: 150, eventDate: new DateOnly(2026, 10, 10)) with
+        {
+            BeverageMode = BeverageMode.BeveragesFree
+        });
 
-        Assert.Contains(result.Deadlines, deadline => deadline.Id == "DL-POLICE-20" && deadline.Status == DeadlineStatus.Approaching);
+        Assert.Contains(resultWithDrinks.Deadlines, deadline => deadline.Id == "DL-SMART-20" && deadline.Status == DeadlineStatus.Approaching);
     }
 
     [Fact]
@@ -273,8 +282,9 @@ public sealed class EventRulesEvaluatorTests
             HasTemporaryInstallations = YesNoUnknown.Yes
         });
 
-        AssertDocument(result, "DOC-SITE-PLAN");
-        AssertDocument(result, "DOC-INSTALLATION-DESCRIPTION");
+        AssertDocument(result, "DOC-SITE-PLAN", RequirementStatus.NeedsConfirmation);
+        AssertDocument(result, "DOC-INSTALLATION-DESCRIPTION", RequirementStatus.NeedsConfirmation);
+        AssertConfirmation(result, "CONF-INSTALLATIONS");
     }
 
     [Fact]
@@ -286,8 +296,8 @@ public sealed class EventRulesEvaluatorTests
             HasProcessionOrRoute = YesNoUnknown.Yes
         });
 
-        AssertDocument(result, "DOC-TRAFFIC-PARKING");
-        AssertDocument(result, "DOC-ROUTE-PLAN");
+        AssertDocument(result, "DOC-TRAFFIC-PARKING", RequirementStatus.NeedsConfirmation);
+        AssertDocument(result, "DOC-ROUTE-PLAN", RequirementStatus.NeedsConfirmation);
         AssertConfirmation(result, "CONF-TRAFFIC");
         AssertConfirmation(result, "CONF-ROAD-CLOSURE");
     }
@@ -496,8 +506,8 @@ public sealed class EventRulesEvaluatorTests
     private static void AssertNoAction(AssessmentResult result, string id) =>
         Assert.DoesNotContain(result.Actions, action => action.Id == id);
 
-    private static void AssertDocument(AssessmentResult result, string id) =>
-        Assert.Contains(result.Documents, document => document.Id == id);
+    private static void AssertDocument(AssessmentResult result, string id, RequirementStatus? status = null) =>
+        Assert.Contains(result.Documents, document => document.Id == id && (status is null || document.Status == status));
 
     private static void AssertInfo(AssessmentResult result, string id) =>
         Assert.Contains(result.Information, item => item.Id == id);

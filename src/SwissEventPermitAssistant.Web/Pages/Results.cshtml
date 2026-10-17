@@ -47,7 +47,7 @@ else
             <p class="eyebrow">Résultat de préparation</p>
             <h1>Votre manifestation</h1>
             <p class="event-summary">
-                @(input.ExpectedAttendance?.ToString() ?? "Nombre à confirmer") personnes ·
+                @(input.ExpectedAttendance?.ToString() ?? "Nombre à confirmer") personnes/jour ·
                 Statut du lieu : @VenueStatusText(input.VenueKind) ·
                 Accès : @EventAccessText(input.IsPublicEvent) ·
                 @Display(input.BeverageMode.ToString()) ·
@@ -69,7 +69,14 @@ else
                 else
                 {
                     <h2>Délai à confirmer</h2>
-                    <p>Aucun délai calculable n’a été identifié pour vos réponses.</p>
+                    @if (result.Deadlines.Any(item => item.Status == DeadlineStatus.Unconfirmed))
+                    {
+                        <p>La date exacte n’est pas calculée pour un délai exprimé en jours ouvrables. Confirmez la date limite auprès de l’autorité compétente.</p>
+                    }
+                    else
+                    {
+                        <p>Aucun délai calculable n’a été identifié pour vos réponses.</p>
+                    }
                 }
             </section>
 

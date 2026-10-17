@@ -63,22 +63,22 @@ Status legend: **Accepted** = reflected in current `main`. **Superseded** = repl
 
 **Status:** Accepted. Clock injection in `ca8ca56` (2026-08-15). Police deadlines reconciled in `607403f` (2026-08-23).
 
-**Context.** Each authority states a minimum lead time: Police locale 20/30/60 days by attendance band, Smart Check 20/30/60 days, Patente K 60 days, OCN 2 months, municipal material 30 days, posting/banner 20 days. Users need the date and whether it has already passed.
+**Context.** Authorities state minimum lead times: Police locale 20/30/60 working days by attendance band, Smart Check 20/30/60 days, Patente K 60 days, OCN 2 months, municipal material 30 days, and posting/banner 20 days. Users need a reliable date and whether it has already passed.
 
 **Decision.**
-- `CreateDaysBefore(id, label, eventDate, days, sourceId)` uses `DateOnly.AddDays(-days)`. `CreateMonthsBefore` uses `DateOnly.AddMonths(-months)`, for calendar months (OCN). Test: `Sport_competition_on_public_road_requires_ocn_authorization_two_calendar_months_before` (10.10 → 10.08).
+- `CreateDaysBefore(id, label, eventDate, days, sourceId)` uses `DateOnly.AddDays(-days)` for rules expressed in days. `CreateMonthsBefore` uses `DateOnly.AddMonths(-months)`, for calendar months (OCN). Police locale deadlines are retained as minimum working-day lead times with no computed date until working days and public holidays can be handled correctly. Test: `Sport_competition_on_public_road_requires_ocn_authorization_two_calendar_months_before` (10.10 → 10.08).
 - Bands: `< 200`, `200..1000` inclusive, `> 1000` (`AddPoliceLocaleRule`, `SmartAction`, `SmartDeadlineDays`, `SmartDeadlineId`, `SourceForAttendance`).
 - `DeadlineStatusFor(date)` returns `Passed` if the date is before today, `Approaching` if it is within 14 days, else `Confirmed`.
 - "Today" comes from an injected `TimeProvider` (constructor `EventRulesEvaluator(TimeProvider? timeProvider = null)`, registered with `AddSingleton(TimeProvider.System)` in `Program.cs`). Before `ca8ca56`, the evaluator had `private static readonly DateOnly Today = new(2026, 8, 14);`.
 - `AssessmentResult.NextImportantDeadline` is the earliest dated deadline. `Results.cshtml` shows it first and adds a warning when its status is `Passed`.
 
-**What changed in history.** Originally the 200–1000 and >1000 Police deadlines were `CreateUnconfirmed("DL-POLICE-UNCONFIRMED", …)` and Smart Check was `DL-SMART-UNCONFIRMED`. After re-reading the Ville pages and adding the durability directive `SRC-VDF-DURABILITY` (`607403f`), they became `DL-POLICE-30/60` and `DL-SMART-20/30/60`. Tests still check that `DL-POLICE-UNCONFIRMED` is gone.
+**What changed in history.** Police lead times and Smart Check initially used unconfirmed placeholders. After the 2026-08 source review, Smart Check retained calendar-day deadlines. The 2026-10-17 review found the current Ville general conditions (version 8, 2026-08-13) specify Police locale deadlines in working days; Police deadline cards now show the correct lead time and mark only the calendar date unconfirmed. Smart Check continues to use calendar days from Directive 300.13.
 
-**Alternatives considered.** A hard-coded date (the first version). It was replaced because it froze deadline status in production and made tests implicit. `Deadline_status_uses_injected_clock` now pins the behaviour.
+**Alternatives considered.** A hard-coded date (the first version). It was replaced because it froze deadline status in production and made tests implicit. `Smart_deadline_status_uses_injected_clock` pins the calendar-deadline behaviour.
 
 **Consequences / trade-offs.**
 - + Deterministic tests: every test uses `FixedTimeProvider(2026-08-14 12:00 UTC)`.
-- The earlier `CreateUnconfirmed` helper became unused after these changes and was removed in v0.1.5. `DeadlineStatus.Unconfirmed` remains available for future rules.
+- The earlier `CreateUnconfirmed` helper became unused after the initial reconciliation and was removed in v0.1.5. `DeadlineStatus.Unconfirmed` is now used when the minimum lead time is known but an exact date is not calculated.
 - − `GetLocalNow()` uses the server's time zone (UTC on Azure Linux), not Europe/Zurich. Near midnight, the "today" used for status can be off by a day. Known limitation.
 - − No test covers the exact band edges (199/200/1000/1001) or the 14-day "Approaching" edge. Tests use 80/150/500/1200.
 
@@ -91,12 +91,12 @@ Status legend: **Accepted** = reflected in current `main`. **Superseded** = repl
 **Context.** Trust depends on showing *where* each requirement comes from and *when* it was checked. Official URLs also break: the Ville form and SmartEvent deep links returned errors on 2026-09-04 (`docs/sources/README.md`).
 
 **Decision.**
-- `OfficialSources.All` (`Domain/Sources/OfficialSource.cs`) is a dictionary of 8 `OfficialSource` records (`SRC-VDF-ENTRY`, `SRC-VDF-LT200`, `SRC-VDF-200-1000`, `SRC-VDF-GT1000`, `SRC-VDF-DURABILITY`, `SRC-FR-PATENTE-K`, `SRC-FR-FORM-B`, `SRC-OCN-SPORT`). Each has `CheckedDate` (2026-08-23) and `Confidence` ("High"/"Medium").
+- `OfficialSources.All` (`Domain/Sources/OfficialSource.cs`) is a dictionary of 8 `OfficialSource` records (`SRC-VDF-ENTRY`, `SRC-VDF-LT200`, `SRC-VDF-200-1000`, `SRC-VDF-GT1000`, `SRC-VDF-DURABILITY`, `SRC-FR-PATENTE-K`, `SRC-FR-FORM-B`, `SRC-OCN-SPORT`). Each has a `CheckedDate` and `Confidence` ("High"/"Medium"); the latest reconciliation is 2026-10-17.
 - Every rule output carries a `SourceId`. The evaluator collects used IDs (`Use(sourceIds, …)`) and returns only the sources that were cited.
 - `docs/sources/README.md` mirrors the table and lists the unresolved interpretations kept as confirmations.
 - `Results.cshtml` renders "Vérifiée le dd.MM.yyyy" per source (`SourceDisclosure`) and a "Sources officielles" rail.
-- **Separation of concerns:** `OfficialResourceCatalog.For(...)` (`Domain/Sources/OfficialResourceCatalog.cs`, `ResourceCheckedDate = 2026-09-04`) adds *action links* (forms, guides) by result ID. The docs state these links "do not change rule triggers, deadlines, or requirement status". Tests lock this in: `Police_locale_action_resolves_to_stable_ville_page_without_changing_rule_output`, `Smart_action_uses_existing_deadline_id_to_select_resource`, `Documents_without_specific_actionable_resource_do_not_get_vague_links`.
-- Broken deep links were replaced by stable Ville pages (`f47bc4c`). `Patente_k_action_links_to_official_information_not_old_egov_detail_url` guards against the old `Detail.aspx?id=1075` URL.
+- **Separation of concerns:** `OfficialResourceCatalog.For(...)` adds *action links* (forms, guides) by result ID. The docs state these links "do not change rule triggers, deadlines, or requirement status". Tests lock this in: `Police_locale_action_resolves_to_current_ville_form_without_changing_rule_output`, `Smart_action_uses_existing_deadline_id_to_select_resource`, `Documents_without_specific_actionable_resource_do_not_get_vague_links`.
+- The 2026-10-17 review found the three Ville attendance-band URLs had become HTTP 410. Attendance rules now cite the Ville's current version 8 terms, the Police locale action links to its active form, and Smart Check actions link to the overview. The review also found that Police locale lead times are working days, so V0.1 no longer reports unsupported calendar-date cut-offs. Formulaire B now uses the Canton’s current canonical document URL. Current check dates are recorded in the source inventory and application metadata.
 
 **Alternatives considered.** Fetching sources at runtime. It is explicitly avoided: threat model, "no runtime fetch; source URLs are displayed as references only".
 
