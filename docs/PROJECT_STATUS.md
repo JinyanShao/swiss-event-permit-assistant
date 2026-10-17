@@ -49,24 +49,36 @@
 ## 演示服务与部署
 
 - 生产 URL：<https://sepa-jinyan.azurewebsites.net>；Azure App Service Free/F1、Linux、Italy North。
-- 本次在线检查成功，但该免费层有冷启动记录且没有 SLA；部署仍为手动 zip 部署，CI 不会自动发布，也没有生产版本标识。
-- 远端保活工作流配置目标为每 10 分钟运行一次；GitHub Actions API 在 2026-10-05 至 2026-10-17 期间只显示 62 次成功运行，约每天 5 次，远低于配置频率。运行成功不代表实际频率足以避免冷启动。GitHub 说明计划任务可能延迟或被丢弃。
+- 2026-10-17 在线探测首页、`/healthz`、`/Assessment` 均返回 HTTP 200，约耗时 0.27/0.11/0.22 秒；这是当次响应，不是冷启动基准，也不构成可用性保证。当前部署仍是手动 zip 发布，没有生产版本标识。
+- 若继续使用 F1，冷启动应作为已知体验边界：首位访问者可能在空闲后等待应用唤醒。Azure 文档说明 Free/Shared 没有 SLA，且 F1 不支持 Always On；GitHub 保活只能偶尔探活，不能承诺保持实例常驻。
+- 保活配置是每小时 6 次（每 10 分钟一次，错开整点）。GitHub API 显示工作流状态为 `active`，默认分支为 `main`。API 在 **2026-10-05 07:25 至 2026-10-17 18:22 UTC** 只显示 62 次运行；按该时段估算约 1,794 个预期触发，记录覆盖约 **3.5%**。62 次全为成功，运行耗时中位数约 51 秒、最长 84 秒；61 个相邻间隔的中位数约 **4 小时 41 分**，最短约 **2 小时 16 分**、最长约 **9 小时 31 分**。因此不是已记录的 ping 失败或长时间占用 runner；大多数计划触发没有成为可见运行。GitHub 官方说明 schedule 事件在 Actions 高负载时可能延迟或丢弃。API 没有逐个未触发事件的原因，无法进一步证明是某一时段的负载、调度丢弃还是其他 GitHub 调度问题；错开整点也没有使该计划可靠。
+- GitHub 账户通知设置已核对：Actions 通知为“GitHub 和 Email，仅失败工作流”；此计划的运行 actor 是 `JinyanShao`，与计划编辑者一致。现有 62 次运行全部成功，所以**通知配置已确认开启，但实际失败邮件投递尚无端到端失败样本验证**。工作流原来的 5 分钟 job 上限也短于三次 90 秒请求加三次 20 秒间隔的最坏 5 分 30 秒；现已改为 6 分钟，确保末次重试和失败摘要有机会完成。
+- 托管成本评估（Microsoft Retail Prices API，2026-10-17，Italy North，USD 公售价，约按 730 小时/月）：
+
+  | 方案 | 月费估算 | 适合度与限制 |
+  | --- | ---: | --- |
+  | 当前 App Service F1 | $0 | 无 SLA；空闲后可能冷启动。继续使用时应向演示者说明这一点，保活工作流不作体验保证。 |
+  | App Service Linux Basic B1 + Always On，1 个实例 | **$13.14/月**（$0.018/小时）；全年约 $157.68 | 保留现有 App Service 和 zip 发布方式，改动最少；Always On 解决空闲卸载导致的冷启动。单实例仍会遇到平台重启或故障，不能当作冗余部署。若需两个实例作冗余，粗估约 $26.28/月。 |
+  | Azure Container Apps Consumption，最小 1 个副本（0.25 vCPU/0.5 GiB） | 空闲基线约 **$7.88/月**；若本订阅的月度免费用量未被其他容器应用消耗，粗估净额约 **$5.72/月** | 可保留一个空闲副本并按较低 idle 费率计费；请求期间按 active 费率，另可能有日志等费用。当前仓库没有 Dockerfile/容器发布路径，迁移工作多于 B1。 |
+
+- **建议：**预算为零时留在 F1，并明确告知冷启动；若作品演示要求稳定快速，优先考虑同一 App Service 升至 B1 并开启 Always On。现有记录中的 Azure for Students 额度若仍是每年 $100，B1 连续运行的标价会超过该额度；当前剩余额度尚未确认。Container Apps 账面可更低，但需增加容器构建/部署路径；这两种付费方案都尚未部署。
+- 本机 Azure CLI 当前无法读取 `asp-sepa-free`（返回 `SubscriptionNotFound`），因此本次无法实时确认 Azure 资源 SKU、学生额度余额或实际账单；上面按 [部署说明](deployment.md)记录的 F1/Italy North 和官方零售价估算。
 - 这次对话中已截取首页和问卷首步画面；截图只显示在对话里，未保存为仓库图片或视频。
 
-参考：[部署说明](deployment.md)、[GitHub 保活工作流](https://github.com/JinyanShao/swiss-event-permit-assistant/blob/main/.github/workflows/keep-warm.yml)、[保活运行记录](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/keep-warm.yml)、[GitHub 定时任务限制](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)。
+参考：[部署说明](deployment.md)、[GitHub 保活工作流](https://github.com/JinyanShao/swiss-event-permit-assistant/blob/main/.github/workflows/keep-warm.yml)、[保活运行记录](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/keep-warm.yml)、[GitHub 定时任务限制](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows#scheduled-events)、[GitHub Actions 通知规则](https://docs.github.com/en/actions/concepts/workflows-and-actions/notifications-for-workflow-runs)、[Azure Always On 与空闲卸载](https://learn.microsoft.com/en-us/azure/app-service/configure-common)、[App Service 规格与 Always On 支持](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits)、[App Service 成本与 SLA](https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs)、[Container Apps 计费和免费额度](https://learn.microsoft.com/en-us/azure/container-apps/billing)、[Container Apps 最小规格](https://learn.microsoft.com/en-us/azure/container-apps/containers#vcpus-and-memory-allocation-requirements)、[Azure Retail Prices API 文档](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices)、[Italy North App Service 价格数据](https://prices.azure.com/api/retail/prices?%24filter=serviceName%20eq%20%27Azure%20App%20Service%27%20and%20armRegionName%20eq%20%27italynorth%27%20and%20priceType%20eq%20%27Consumption%27)、[Italy North Container Apps 价格数据](https://prices.azure.com/api/retail/prices?%24filter=serviceName%20eq%20%27Azure%20Container%20Apps%27%20and%20armRegionName%20eq%20%27italynorth%27%20and%20priceType%20eq%20%27Consumption%27)、[Azure for Students 额度与续期](https://learn.microsoft.com/en-us/azure/education-hub/navigate-costs)。
 
 ## 恢复开发时
 
 - 每次继续前检查 `git status --short --branch` 和远端提交，避免把旧的本地状态当成当前状态；来源复核记录和应用元数据的日期以逐项核验记录为准。
 - 仓库推送不会自动发布生产站点：目前仍需手动 zip 部署。发布后应单独检查生产健康状态和部署版本。
-- 免费层可能冷启动；保活工作流的实际执行频率曾低于配置目标，重新评估演示可用性时应检查最新 Actions 运行记录。
+- 当前 F1 的冷启动是已知体验边界；GitHub Actions schedule 不能可靠保温。若演示需要常驻快速响应，先决定是否接受 B1 的持续月费，再升级并打开 Always On。
 
 ## 已知缺口与优先级
 
 ### 先处理：可信度与运行可靠性
 
 1. 按[主管机关确认跟进](#主管机关确认跟进)先核实 Police locale 邮件是否已发送，再向 Ville de Fribourg（Smart Event）、Préfecture de la Sarine 和 OCN 发送问题；收到书面答复后逐项决定是否调整规则或继续显示“待确认”。
-2. 调查保活计划为何实际运行远少于配置频率，并确认失败通知有效。若继续使用免费层，就把冷启动作为已知体验边界；若演示必须稳定快速，再评估支持常驻实例的托管方案及成本。
+2. 已完成保活调查：GitHub schedule 运行远少于配置且 API 不能提供丢失触发的逐项原因；失败通知偏好已开启，但邮件投递尚无真实失败样本验证。保活仅作探活，F1 冷启动作为已知边界；已比较 B1 和 Container Apps 成本。仍待决定是否为招牌项目付费升至 B1。
 3. Deadline 状态目前依赖服务器本地时区；决策记录指出 Azure Linux 使用 UTC，在苏黎世午夜附近可能偏一天。应显式按 `Europe/Zurich` 计算，并覆盖日期边界。Police locale 期限还须按工作日处理（含公假规则）；目前只显示最低工作日提前量，没有计算截止日。
 
 ### 再补：防回归能力

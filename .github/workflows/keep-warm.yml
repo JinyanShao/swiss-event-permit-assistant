@@ -1,11 +1,11 @@
 name: Keep the demo warm
 
-# The demo runs on an Azure free tier, which puts the app to sleep after about
-# 20 minutes of no traffic. The first visitor after that waits through a cold
-# start. This pings the app often enough that a visitor rarely does.
+# GitHub can delay or drop scheduled events, so this is an opportunistic health
+# check, not a reliable way to keep the Azure Free-tier app warm. Cold starts
+# after idle time remain an expected experience on F1.
 #
-# It doubles as a liveness check: if the app answers with an error, or does not
-# answer at all, this job fails and GitHub emails the repository owner.
+# A failed ping fails this job. GitHub notifications follow the schedule
+# actor's personal Actions notification preferences.
 
 on:
   schedule:
@@ -24,7 +24,7 @@ concurrency:
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6 # Three 90-second requests plus retry waits need up to 330 seconds.
     steps:
       - name: Ping the live demo
         run: |
