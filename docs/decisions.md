@@ -36,7 +36,7 @@ Status legend: **Accepted** = reflected in current `main`. **Superseded** = repl
 
 **Status:** Accepted. Strengthened in `15861b3` "Fix assessment scope and safe defaults" (2026-09-03).
 
-**Context.** Official pages leave some cases ambiguous: free drinks or food, free alcohol, the Formulaire B threshold, public events on private land. A wrong "Required" could send an organiser to the wrong office. A missing requirement could cause a refusal. `docs/sources/README.md` (Freshness Policy): *"mark the affected result as `Needs Confirmation` instead of inferring a requirement."*
+**Context.** Official pages leave some cases ambiguous: free drinks or food, free alcohol, the Formulaire B threshold, public events on private land. A wrong "Required" could send an organiser to the wrong office. A missing requirement could cause a refusal. `docs/PROJECT_STATUS.md` (Official Source Registry and Freshness Policy): *"mark the affected result as `Needs Confirmation` instead of inferring a requirement."*
 
 **Decision.**
 - Three kinds of output: `RequirementStatus.Required` actions and documents, `InformationItem`, and `ConfirmationItem` (with `WhatToDo` and `Authority`).
@@ -88,15 +88,15 @@ Status legend: **Accepted** = reflected in current `main`. **Superseded** = repl
 
 **Status:** Accepted. Sources in `607403f`. Resource links in `e81b2f6` / `4f15fcd` / `f47bc4c` (2026-09-02 to 2026-09-04).
 
-**Context.** Trust depends on showing *where* each requirement comes from and *when* it was checked. Official URLs also break: the Ville form and SmartEvent deep links returned errors on 2026-09-04 (`docs/sources/README.md`).
+**Context.** Trust depends on showing *where* each requirement comes from and *when* it was checked. Official URLs also break: the Ville form and SmartEvent deep links returned errors on 2026-09-04 (`docs/PROJECT_STATUS.md`).
 
 **Decision.**
 - `OfficialSources.All` (`Domain/Sources/OfficialSource.cs`) is a dictionary of 8 `OfficialSource` records (`SRC-VDF-ENTRY`, `SRC-VDF-LT200`, `SRC-VDF-200-1000`, `SRC-VDF-GT1000`, `SRC-VDF-DURABILITY`, `SRC-FR-PATENTE-K`, `SRC-FR-FORM-B`, `SRC-OCN-SPORT`). Each has a `CheckedDate` and `Confidence` ("High"/"Medium"); the latest reconciliation is 2026-10-17.
 - Every rule output carries a `SourceId`. The evaluator collects used IDs (`Use(sourceIds, …)`) and returns only the sources that were cited.
-- `docs/sources/README.md` mirrors the table and lists the unresolved interpretations kept as confirmations.
+- `docs/PROJECT_STATUS.md` keeps the source table, dated review, and unresolved interpretations in one place.
 - `Results.cshtml` renders "Vérifiée le dd.MM.yyyy" per source (`SourceDisclosure`) and a "Sources officielles" rail.
 - **Separation of concerns:** `OfficialResourceCatalog.For(...)` adds *action links* (forms, guides) by result ID. The docs state these links "do not change rule triggers, deadlines, or requirement status". Tests lock this in: `Police_locale_action_resolves_to_current_ville_form_without_changing_rule_output`, `Smart_action_uses_existing_deadline_id_to_select_resource`, `Documents_without_specific_actionable_resource_do_not_get_vague_links`.
-- The 2026-10-17 review found the three Ville attendance-band URLs had become HTTP 410. Attendance rules now cite the Ville's current version 8 terms, the Police locale action links to its active form, and Smart Check actions link to the overview. The review also found that Police locale lead times are working days, so V0.1 no longer reports unsupported calendar-date cut-offs. Formulaire B now uses the Canton’s current canonical document URL. Current check dates are recorded in the source inventory and application metadata.
+- The 2026-10-17 review found the three Ville attendance-band URLs had become HTTP 410. Attendance rules now cite the Ville's current version 8 terms, the Police locale action links to its active form, and Smart Check actions link to the overview. The review also found that Police locale lead times are working days, so V0.1 no longer reports unsupported calendar-date cut-offs. Formulaire B now uses the Canton’s current canonical document URL. Current check dates are recorded in the project status document and application metadata.
 
 **Alternatives considered.** Fetching sources at runtime. It is explicitly avoided: threat model, "no runtime fetch; source URLs are displayed as references only".
 

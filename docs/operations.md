@@ -44,7 +44,7 @@ The endpoint should return a successful response. The application is deployed ov
 
 Official-source references are maintained in:
 
-- `docs/sources/README.md`
+- `docs/PROJECT_STATUS.md`
 - `src/SwissEventPermitAssistant.Domain/Sources/OfficialSource.cs`
 
 Sources should be reviewed before releases that change permit rules or user-facing administrative guidance.

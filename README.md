@@ -74,8 +74,8 @@ docs/
     Local development, testing, and maintenance
   deployment.md
     Azure production deployment
-  sources/
-    Official source inventory and checked dates
+  PROJECT_STATUS.md
+    Project status, official source inventory, review, and authority follow-up
   product/
     Product and UI specifications
 ```
@@ -105,14 +105,14 @@ GitHub Actions runs restore, build, test, and publish checks on every push and p
 
 - [docs/deployment.md](docs/deployment.md) — production deployment and release procedures
 - [docs/operations.md](docs/operations.md) — local development, testing, health checks, and maintenance
-- [docs/sources/README.md](docs/sources/README.md) — official source inventory and freshness policy
+- [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) — project status, official source inventory and review
 - [docs/decisions.md](docs/decisions.md) — architecture decision log
 
 ## Disclaimer And Source Freshness
 
 Swiss Event Permit Assistant is not affiliated with the Ville de Fribourg, Canton de Fribourg, prefectures, Police locale, or OCN. It organizes public information for preparation only. Users must confirm final requirements, forms, fees, deadlines, and submission instructions with the competent authority.
 
-Rule sources were last reviewed on 2026-10-17. Source freshness policy, the itemized review, and unresolved interpretations are recorded in `docs/sources/README.md`.
+Rule sources were last reviewed on 2026-10-17. Source inventory, freshness policy, the dated review, and unresolved authority questions are recorded in [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md).
 
 ## Design Direction
 
