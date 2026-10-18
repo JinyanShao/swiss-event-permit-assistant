@@ -1,6 +1,6 @@
 # Swiss Event Permit Assistant：项目状态与恢复笔记
 
-最后整理：2026-10-17。用于恢复项目上下文；线上状态和官方来源会变化，继续开发前请重新核实。
+最后整理：2026-10-18。用于恢复项目上下文；线上状态和官方来源会变化，继续开发前请重新核实。
 
 ## 一分钟状态
 
@@ -20,6 +20,7 @@
 - 2026-09-29：发布 V0.1.5，包含校验、草稿恢复、结果资源链接和文档整理。
 - 2026-10-05：远端 `main` 增加 GitHub Actions 定时 ping，尝试缓解 Azure 免费层冷启动。
 - 2026-10-17：重新核对 8 条官方来源和相关资源；发现三条旧人数分档链接 HTTP 410，并找到市府《Conditions générales》2026-08-13 版本 8，明确 Police locale 期限是 20/30/60 个工作日。应用更新来源和资源链接，停止按自然日显示 Police locale 截止日期，并把依据不足的材料要求改为“待确认”。
+- 2026-10-18：确认 GitHub Education 学生资格有效至 2027-11-24；找到可能覆盖常驻演示费用的 Heroku 学生优惠。Heroku 优惠是否已领取、剩余月份及 Azure 学生额度余额尚未确认。
 
 详细记录见 [CHANGELOG.md](../CHANGELOG.md)、[第一轮用户测试](user-testing/round-1.md) 和 [第二轮外部反馈](user-testing/round-2.md)。第二轮是协会支持中间人的反馈与转介信号，不是合作、官方背书、正式采用或协会用户量证明。
 
@@ -58,27 +59,28 @@
   | 方案 | 月费估算 | 适合度与限制 |
   | --- | ---: | --- |
   | 当前 App Service F1 | $0 | 无 SLA；空闲后可能冷启动。继续使用时应向演示者说明这一点，保活工作流不作体验保证。 |
+  | Heroku Cedar Basic，1 个实例 | **$7/月**；若 Heroku 学生优惠已获批且仍有效，每月 $13 额度可覆盖，现金支出约 $0 | 不因空闲休眠；官方支持 .NET 10。需要迁移部署和绑定有效支付卡，超过额度会扣卡；额度从获批起最多 24 个月、按月到期且不结转。单实例会定期重启，不保证零中断。当前优惠领取状态未核实。 |
   | App Service Linux Basic B1 + Always On，1 个实例 | **$13.14/月**（$0.018/小时）；全年约 $157.68 | 保留现有 App Service 和 zip 发布方式，改动最少；Always On 解决空闲卸载导致的冷启动。单实例仍会遇到平台重启或故障，不能当作冗余部署。若需两个实例作冗余，粗估约 $26.28/月。 |
-  | Azure Container Apps Consumption，最小 1 个副本（0.25 vCPU/0.5 GiB） | 空闲基线约 **$7.88/月**；若本订阅的月度免费用量未被其他容器应用消耗，粗估净额约 **$5.72/月** | 可保留一个空闲副本并按较低 idle 费率计费；请求期间按 active 费率，另可能有日志等费用。当前仓库没有 Dockerfile/容器发布路径，迁移工作多于 B1。 |
+  | Azure Container Apps Consumption，最小 1 个副本（0.25 vCPU/0.5 GiB） | 空闲计算基线约 **$7.88/月**；若本订阅的月度免费用量未被其他容器应用消耗，粗估净额约 **$5.72/月** | 只估算空闲计算；请求、日志、镜像仓库等可能另计费。当前仓库没有容器发布路径，迁移工作多于 B1。 |
 
-- **建议：**预算为零时留在 F1，并明确告知冷启动；若作品演示要求稳定快速，优先考虑同一 App Service 升至 B1 并开启 Always On。现有记录中的 Azure for Students 额度若仍是每年 $100，B1 连续运行的标价会超过该额度；当前剩余额度尚未确认。Container Apps 账面可更低，但需增加容器构建/部署路径；这两种付费方案都尚未部署。
-- 本机 Azure CLI 当前无法读取 `asp-sepa-free`（返回 `SubscriptionNotFound`），因此本次无法实时确认 Azure 资源 SKU、学生额度余额或实际账单；上面按 [部署说明](deployment.md)记录的 F1/Italy North 和官方零售价估算。
+- **建议：**先在 Heroku 账单页核对学生额度是否已领取、剩余月份及卡片扣费设置；若仍可领取且接受绑定支付卡，优先试运行 Cedar Basic，确认问卷和结果页正常后再切换公开演示链接。GitHub 学生资格本身不代表 Heroku 额度已经获批。若留在 Azure 且要求常驻，先核对 Azure for Students 的实际余额和到期日，再决定是否升 B1；其官方额度为每 12 个月 $100，按上述标价不足以覆盖 B1 全年。两种常驻方案都尚未部署，当前仍是 F1。GitHub 学生包已无 DigitalOcean 的旧 $200 优惠，不应把它计入免费方案。
+- 2026-10-18 在 GitHub 账户看到学生资格于 2025-11-24 获批，2027-11-24 到期，合作伙伴优惠可用；Heroku 账单页要求登录，无法确认是否已兑换。Azure 学校账户登录需要设备验证，本机 CLI 读取 `asp-sepa-free` 仍返回 `SubscriptionNotFound`，因此实际 SKU、学生额度余额和账单尚未实时核对；Azure 估算仍按[部署说明](deployment.md)记录的 F1/Italy North 计算。
 - 这次对话中已截取首页和问卷首步画面；截图只显示在对话里，未保存为仓库图片或视频。
 
-参考：[部署说明](deployment.md)、[GitHub 保活工作流](https://github.com/JinyanShao/swiss-event-permit-assistant/blob/main/.github/workflows/keep-warm.yml)、[保活运行记录](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/keep-warm.yml)、[GitHub 定时任务限制](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows#scheduled-events)、[GitHub Actions 通知规则](https://docs.github.com/en/actions/concepts/workflows-and-actions/notifications-for-workflow-runs)、[Azure Always On 与空闲卸载](https://learn.microsoft.com/en-us/azure/app-service/configure-common)、[App Service 规格与 Always On 支持](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits)、[App Service 成本与 SLA](https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs)、[Container Apps 计费和免费额度](https://learn.microsoft.com/en-us/azure/container-apps/billing)、[Container Apps 最小规格](https://learn.microsoft.com/en-us/azure/container-apps/containers#vcpus-and-memory-allocation-requirements)、[Azure Retail Prices API 文档](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices)、[Italy North App Service 价格数据](https://prices.azure.com/api/retail/prices?%24filter=serviceName%20eq%20%27Azure%20App%20Service%27%20and%20armRegionName%20eq%20%27italynorth%27%20and%20priceType%20eq%20%27Consumption%27)、[Italy North Container Apps 价格数据](https://prices.azure.com/api/retail/prices?%24filter=serviceName%20eq%20%27Azure%20Container%20Apps%27%20and%20armRegionName%20eq%20%27italynorth%27%20and%20priceType%20eq%20%27Consumption%27)、[Azure for Students 额度与续期](https://learn.microsoft.com/en-us/azure/education-hub/navigate-costs)。
+参考：[部署说明](deployment.md)、[GitHub 保活工作流](https://github.com/JinyanShao/swiss-event-permit-assistant/blob/main/.github/workflows/keep-warm.yml)、[保活运行记录](https://github.com/JinyanShao/swiss-event-permit-assistant/actions/workflows/keep-warm.yml)、[GitHub 定时任务限制](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows#scheduled-events)、[GitHub Actions 通知规则](https://docs.github.com/en/actions/concepts/workflows-and-actions/notifications-for-workflow-runs)、[Heroku 学生优惠与领取条件](https://www.heroku.com/github-students/)、[Heroku 价格](https://www.heroku.com/pricing/)、[Heroku .NET 支持](https://devcenter.heroku.com/articles/dotnet-heroku-support-reference)、[Heroku 实例重启](https://devcenter.heroku.com/articles/dyno-restarts)、[GitHub 学生包当前优惠](https://education.github.com/pack)、[DigitalOcean 学生优惠退场说明](https://www.digitalocean.com/community/questions/are-github-student-pack-200-credits-applicable-on-gpu-droplets)、[Azure Always On 与空闲卸载](https://learn.microsoft.com/en-us/azure/app-service/configure-common)、[App Service 规格与 Always On 支持](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits)、[App Service 成本与 SLA](https://learn.microsoft.com/en-us/azure/app-service/overview-manage-costs)、[Container Apps 计费和免费额度](https://learn.microsoft.com/en-us/azure/container-apps/billing)、[Container Apps 最小规格](https://learn.microsoft.com/en-us/azure/container-apps/containers#vcpus-and-memory-allocation-requirements)、[Azure Retail Prices API 文档](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices)、[Italy North App Service 价格数据](https://prices.azure.com/api/retail/prices?%24filter=serviceName%20eq%20%27Azure%20App%20Service%27%20and%20armRegionName%20eq%20%27italynorth%27%20and%20priceType%20eq%20%27Consumption%27)、[Italy North Container Apps 价格数据](https://prices.azure.com/api/retail/prices?%24filter=serviceName%20eq%20%27Azure%20Container%20Apps%27%20and%20armRegionName%20eq%20%27italynorth%27%20and%20priceType%20eq%20%27Consumption%27)、[Azure for Students 额度与续期](https://azure.microsoft.com/en-us/free/students/)。
 
 ## 恢复开发时
 
 - 每次继续前检查 `git status --short --branch` 和远端提交，避免把旧的本地状态当成当前状态；来源复核记录和应用元数据的日期以逐项核验记录为准。
 - 仓库推送不会自动发布生产站点：目前仍需手动 zip 部署。发布后应单独检查生产健康状态和部署版本。
-- 当前 F1 的冷启动是已知体验边界；GitHub Actions schedule 不能可靠保温。若演示需要常驻快速响应，先决定是否接受 B1 的持续月费，再升级并打开 Always On。
+- 当前 F1 的冷启动是已知体验边界；GitHub Actions schedule 不能可靠保温。若演示需要常驻快速响应，先核对 Heroku 学生额度及剩余月份；若不适用，再核对 Azure 学生余额并决定是否升 B1、打开 Always On。
 
 ## 已知缺口与优先级
 
 ### 先处理：可信度与运行可靠性
 
 1. 按[主管机关确认跟进](#主管机关确认跟进)先核实 Police locale 邮件是否已发送，再向 Ville de Fribourg（Smart Event）、Préfecture de la Sarine 和 OCN 发送问题；收到书面答复后逐项决定是否调整规则或继续显示“待确认”。
-2. 已完成保活调查：GitHub schedule 运行远少于配置且 API 不能提供丢失触发的逐项原因；失败通知偏好已开启，但邮件投递尚无真实失败样本验证。保活仅作探活，F1 冷启动作为已知边界；已比较 B1 和 Container Apps 成本。仍待决定是否为招牌项目付费升至 B1。
+2. 已完成保活调查：GitHub schedule 运行远少于配置且 API 不能提供丢失触发的逐项原因；失败通知偏好已开启，但邮件投递尚无真实失败样本验证。保活仅作探活，F1 冷启动作为已知边界；已比较 Heroku 学生优惠、Azure B1 和 Container Apps。下一步核实 Heroku 额度和 Azure 余额，再选常驻托管方案。
 3. Deadline 状态目前依赖服务器本地时区；决策记录指出 Azure Linux 使用 UTC，在苏黎世午夜附近可能偏一天。应显式按 `Europe/Zurich` 计算，并覆盖日期边界。Police locale 期限还须按工作日处理（含公假规则）；目前只显示最低工作日提前量，没有计算截止日。
 
 ### 再补：防回归能力
